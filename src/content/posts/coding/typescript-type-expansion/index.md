@@ -1,22 +1,22 @@
 ---
-title: VsCode 如何避免大型 TypeScript 类型在 Hover 时被省略
+title: VSCode 如何避免大型 TypeScript 类型在 Hover 时被省略
 published: 2025-12-15
 updated: 2025-12-15
-description: 记录在 VsCode 中展开大型 TypeScript hover 类型的方法。
+description: 记录在 VSCode 中展开大型 TypeScript hover 类型的方法。
 image: ./the_issue.webp
 tags:
   - coding
   - TypeScript
-  - VsCode
-category: Coding
+  - VSCode
+category: 'Coding'
 draft: false
 ---
 
-最近在写项目遇到了一些巨大 TypeScript 类型，想要查看类型的具体结构，但沟槽的 VsCode 默认只显示一小部分内容，并用省略号 `...` 代替剩余部分：
+最近在写项目遇到了一些巨大 TypeScript 类型，想要查看类型的具体结构，但沟槽的 VSCode 默认只显示一小部分内容，并用省略号 `...` 代替剩余部分：
 
-![VsCode hover 被省略的类型](./the_ellipsis.webp)
+![VSCode hover 被省略的类型](./the_ellipsis.webp)
 
-给我恶心坏了，VsCode 没法展开这个类型，因为语言服务器就是这么返回的。。。
+给我恶心坏了，VSCode 没法展开这个类型，因为语言服务器就是这么返回的。。。
 
 经过一番 Google `vscode typescript展开`，发现了一个[解决方案](https://segmentfault.com/a/1190000043495782)。
 
@@ -35,8 +35,8 @@ const quickInfo = project.getLanguageService().getQuickInfoAtPosition(
 );
 ```
 
-这个 `userPreferences.maximumHoverLength` 一看就是什么 VsCode 里应该有的配置，于是返回 GitHub 搜索，得到 [#248181](https://github.com/microsoft/vscode/pull/248181)，今年 5 月刚合并的 PR，终于啊！
+这个 `userPreferences.maximumHoverLength` 一看就是什么 VSCode 里应该有的配置，于是返回 GitHub 搜索，得到 [#248181](https://github.com/microsoft/vscode/pull/248181)，今年 5 月刚合并的 PR，终于啊！
 
 在这个 PR 的 diff 里得到 `js/ts.hover.maximumLength`，改大这个就可以完美解决这个问题了，爽。
 
-![VsCode 设置页面](./the_settings_page.webp)
+![VSCode 设置页面](./the_settings_page.webp)
