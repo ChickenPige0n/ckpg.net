@@ -1,3 +1,3 @@
-name = "ckpg-net"
+name = 'ckpg-dot-net'
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
