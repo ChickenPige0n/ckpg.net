@@ -26,7 +26,10 @@ const specCollection = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/spec" }),
 	schema: z.object({}),
 });
-export const collections = {
+export const collections: Record<
+	string,
+	ReturnType<typeof defineCollection>
+> = {
 	posts: postsCollection,
 	spec: specCollection,
 };

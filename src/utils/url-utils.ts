@@ -1,7 +1,7 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 
-export function pathsEqual(path1: string, path2: string) {
+export function pathsEqual(path1: string, path2: string): boolean {
 	const normalizedPath1 = path1.replace(/^\/|\/$/g, "").toLowerCase();
 	const normalizedPath2 = path2.replace(/^\/|\/$/g, "").toLowerCase();
 	return normalizedPath1 === normalizedPath2;
@@ -44,11 +44,11 @@ export function getContentDir(id: string): string {
 	// e.g., "coding/typescript-type-expansion" instead of "coding/typescript-type-expansion/index"
 	// So we need to return the full path as a directory
 	if (!id.includes(".") || id.endsWith("/")) {
-		return id.endsWith("/") ? id : id + "/";
+		return id.endsWith("/") ? id : `${id}/`;
 	}
 	return getDir(id);
 }
 
-export function url(path: string) {
+export function url(path: string): string {
 	return joinUrl("", import.meta.env.BASE_URL, path);
 }

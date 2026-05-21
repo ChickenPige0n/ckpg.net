@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import type { PostData } from "@utils/content-utils";
 import { getPostUrlBySlug } from "@utils/url-utils";
 import PostCard from "./PostCard.astro";
 
@@ -12,15 +13,15 @@ const interval = 50;
     {page.data.map((entry: CollectionEntry<"posts">) => (
         <PostCard
                 entry={entry}
-                title={entry.data.title}
-                tags={entry.data.tags}
-                category={entry.data.category}
-                published={entry.data.published}
-                updated={entry.data.updated}
+                title={(entry.data as PostData).title}
+                tags={(entry.data as PostData).tags}
+                category={(entry.data as PostData).category}
+                published={(entry.data as PostData).published}
+                updated={(entry.data as PostData).updated}
                 url={getPostUrlBySlug(entry.id)}
-                image={entry.data.image}
-                description={entry.data.description}
-                draft={entry.data.draft}
+                image={(entry.data as PostData).image}
+                description={(entry.data as PostData).description}
+                draft={(entry.data as PostData).draft}
                 class:list="onload-animation"
                 style={`animation-delay: calc(var(--content-delay) + ${delay++ * interval}ms);`}
         ></PostCard>
