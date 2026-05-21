@@ -1,12 +1,14 @@
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
-import tailwind from "@astrojs/tailwind";
+import tailwindcss from "@tailwindcss/vite";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import swup from "@swup/astro";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
+import cloudflare from '@astrojs/cloudflare';
+import { fileURLToPath } from "node:url";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
@@ -29,10 +31,10 @@ export default defineConfig({
 	site: "https://ckpg.net/",
 	base: "/",
 	trailingSlash: "always",
+	adapter: cloudflare({
+		imageService: 'compile',
+	}),
 	integrations: [
-		tailwind({
-			nesting: true,
-		}),
 		swup({
 			theme: false,
 			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
@@ -99,7 +101,7 @@ export default defineConfig({
 				showCopyToClipboardButton: false,
 			}
 		}),
-        svelte(),
+		svelte(),
 		sitemap(),
 	],
 	markdown: {
@@ -154,6 +156,56 @@ export default defineConfig({
 		],
 	},
 	vite: {
+		plugins: [
+			tailwindcss(),
+			{
+				name: "optimize-deps",
+				configEnvironment(name) {
+					if (name === "client") {
+						return {
+							optimizeDeps: {
+								include: [
+									"overlayscrollbars",
+									"photoswipe",
+									"photoswipe/lightbox",
+									"@swup/astro/serialise",
+									"@swup/astro/idle",
+									"@swup/astro/client/Swup",
+									"@swup/astro/client/SwupA11yPlugin",
+									"@swup/astro/client/SwupPreloadPlugin",
+									"@swup/astro/client/SwupScrollPlugin",
+									"@swup/astro/client/SwupHeadPlugin",
+									"@swup/astro/client/SwupScriptsPlugin",
+								],
+							},
+						};
+					} else {
+						return {
+							optimizeDeps: {
+								include: [
+									"reading-time",
+									"markdown-it",
+									"sanitize-html",
+									"hastscript",
+									"unist-util-visit",
+									"mdast-util-to-string",
+									"@astrojs/rss",
+									"@expressive-code/core",
+								],
+							},
+						};
+					}
+				},
+			},
+		],
+		resolve: {
+			alias: {
+				// debug@4.x is CommonJS (`module.exports = ...`) and crashes in the
+				// Cloudflare Workers V8 isolate.  @iconify/utils imports it as a
+				// side-effect for internal logging; replace with a no-op ESM shim.
+				"debug": fileURLToPath(new URL("./src/shims/debug.mjs", import.meta.url)),
+			},
+		},
 		build: {
 			rollupOptions: {
 				onwarn(warning, warn) {

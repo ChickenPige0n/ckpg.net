@@ -39,6 +39,16 @@ export function getDir(path: string): string {
 	return path.substring(0, lastSlashIndex + 1);
 }
 
+export function getContentDir(id: string): string {
+	// In Astro 6 with glob loader, index.md files have IDs without the "index" part
+	// e.g., "coding/typescript-type-expansion" instead of "coding/typescript-type-expansion/index"
+	// So we need to return the full path as a directory
+	if (!id.includes(".") || id.endsWith("/")) {
+		return id.endsWith("/") ? id : id + "/";
+	}
+	return getDir(id);
+}
+
 export function url(path: string) {
 	return joinUrl("", import.meta.env.BASE_URL, path);
 }
