@@ -6,7 +6,7 @@
 		"dev": "astro dev",
 		"start": "astro dev",
 		"check": "astro check",
-		"build": "astro build && pagefind --site dist",
+		"build": "astro build && pagefind --site dist --output-path dist/client/pagefind",
 		"preview": "astro preview",
 		"preview:cf": "wrangler dev dist/server/entry.mjs --config dist/server/wrangler.json --no-bundle",
 		"astro": "astro",
