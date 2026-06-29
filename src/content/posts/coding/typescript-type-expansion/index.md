@@ -1,11 +1,10 @@
 ---
 title: VSCode 如何避免大型 TypeScript 类型在 Hover 时被省略
 published: 2025-12-15
-updated: 2025-12-15
+updated: 2026-06-29
 description: 记录在 VSCode 中展开大型 TypeScript hover 类型的方法。
 image: ./the_issue.webp
 tags:
-  - coding
   - TypeScript
   - VSCode
 category: 'Coding'
@@ -26,7 +25,7 @@ draft: false
 
 很可惜，这个 issue 仍然没法解决我的问题。再重新看那个硬编码的解决办法对应的文件（还是看这个 issue 评论区知道的[文件更改](https://github.com/microsoft/vscode/issues/64566#issuecomment-2376295783)），顺着这个 `defaultHoverMaximumTruncationLength` 找到了另一个变量 `maximumLength`，这玩意比前面那个优先级更高。ctrl+左键查看定义，发现 `getQuickInfoAtPosition` 函数，顺着它终于找到最关键的部分：
 
-```js
+```js title=node_modules/typescript/lib/tsserver.js "userPreferences.maximumHoverLength"
 const quickInfo = project.getLanguageService().getQuickInfoAtPosition(
 	file,
 	this.getPosition(args, scriptInfo),
@@ -38,5 +37,9 @@ const quickInfo = project.getLanguageService().getQuickInfoAtPosition(
 这个 `userPreferences.maximumHoverLength` 一看就是什么 VSCode 里应该有的配置，于是返回 GitHub 搜索，得到 [#248181](https://github.com/microsoft/vscode/pull/248181)，今年 5 月刚合并的 PR，终于啊！
 
 在这个 PR 的 diff 里得到 `js/ts.hover.maximumLength`，改大这个就可以完美解决这个问题了，爽。
+
+:::note[没绷住]
+2026.6.29 重新看了下这篇，绕了这么大一圈，被自己气笑了
+:::
 
 ![VSCode 设置页面](./the_settings_page.webp)

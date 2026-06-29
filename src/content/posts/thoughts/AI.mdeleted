@@ -3,7 +3,7 @@ title: 泛谈AI
 published: 2026-06-04
 description: ''
 image: ''
-tags: ["LLM", "AI", "Transformer", "thoughts"]
+tags: ["LLM", "AI", "Transformer"]
 category: 'Thoughts'
 draft: false 
 lang: ''
@@ -48,4 +48,4 @@ Transformer通过上下文实现的上下文内记忆是不可持续扩展的
 Transformer是如何学到知识的？我们能从它的架构中提取什么经验？
 
 
-抱歉写的很胡言乱语，谢谢你能读到这里
+2026.6.29 写的太烂了 已隐藏

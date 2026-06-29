@@ -1,0 +1,28 @@
+---
+title: 在站点中集成Typst
+published: 2026-06-29
+description: 'OverflowCat/astro-typst'
+image: ''
+tags:
+  - this-site
+  - Typst
+category: 'Coding'
+draft: false 
+lang: ''
+---
+
+通过下面这个库实现了Typst在本站点的集成
+::github{repo="OverflowCat/astro-typst"}
+
+有依赖冲突，但 it works。
+```
+└─┬ astro-typst 0.12.3
+  └─┬ astro-integration-kit 0.19.1
+    └── ✕ unmet peer astro@"^4.14.0 || ^5.0.0": found 7.0.3
+```
+
+import Example from './example.typ';
+
+<Example />
+
+好耶是Typst

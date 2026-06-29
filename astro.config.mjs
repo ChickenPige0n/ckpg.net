@@ -1,5 +1,7 @@
 import { fileURLToPath } from "node:url";
 import cloudflare from "@astrojs/cloudflare";
+import { unified } from "@astrojs/markdown-remark";
+import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
@@ -9,6 +11,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
+import { typst } from "astro-typst";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
@@ -104,8 +107,30 @@ export default defineConfig({
 		}),
 		svelte(),
 		sitemap(),
+		mdx(),
+		typst({
+			options: {
+				remPx: 14,
+			},
+			target: (id) => {
+				console.debug(`Detecting ${id}`);
+				if (id.endsWith(".html.typ") || id.includes("/html/")) return "html";
+				return "svg";
+			},
+			// === Use html-text output rather than hAST ===
+			htmlMode: "text", // added in v0.12.3
+			// === <img src="xxx.svg"> instead of inlined <svg> ===
+			// emitSvg: true,
+			// emitSvgDir: ".astro/typst"
+			// === Add non-system fonts here ===
+			// fontArgs: [
+			//   { fontPaths: ['/system/fonts', '/user/fonts'] },
+			//   { fontBlobs: [customFontBuffer] }
+			// ],
+		}),
 	],
 	markdown: {
+		processor: unified(),
 		remarkPlugins: [
 			remarkMath,
 			remarkReadingTime,

@@ -4,7 +4,6 @@ published: 2026-05-20
 description: 'So I changed my blog template to fuwari.'
 image: ''
 tags:
-  - coding
   - this-site
 category: 'Coding'
 draft: false 
