@@ -38,7 +38,7 @@
     "@iconify/svelte": "^5.2.1",
     "@myriaddreamin/typst-ts-node-compiler": "^0.7.0-rc2",
     "@myriaddreamin/typst-ts-renderer": "^0.7.0-rc2",
-    "@myriaddreamin/typst.ts": "0.7.0-rc2",
+    "@myriaddreamin/typst.ts": "0.7.0",
     "@swup/astro": "^1.8.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.3.0",
