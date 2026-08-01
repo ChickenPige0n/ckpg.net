@@ -112,4 +112,16 @@ export function applyUiLang(lang: string): void {
 			el.setAttribute("placeholder", t[key]);
 		}
 	});
+	document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
+		const key = el.getAttribute("data-i18n-aria-label");
+		if (key && t[key] && el.getAttribute("aria-label") !== t[key]) {
+			el.setAttribute("aria-label", t[key]);
+		}
+	});
+	document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+		const key = el.getAttribute("data-i18n-title");
+		if (key && t[key] && el.getAttribute("title") !== t[key]) {
+			el.setAttribute("title", t[key]);
+		}
+	});
 }

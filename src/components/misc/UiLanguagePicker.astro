@@ -1,16 +1,23 @@
 ---
 import { Icon } from "astro-icon/components";
+import { siteConfig } from "../../config";
+import I18nKey from "../../i18n/i18nKey";
+import { getTranslation } from "../../i18n/translation";
 import { UI_LANGS } from "../../i18n/ui-language";
 
 interface Props {
 	class?: string;
+	lang?: string;
 }
 
 const className = Astro.props.class;
+const pageLang = Astro.props.lang || siteConfig.lang;
+const t = getTranslation(pageLang);
 ---
 
 <div class:list={[className, "relative"]}>
-	<button type="button" id="ui-lang-switch" aria-label="Interface language" title="Interface language"
+	<button type="button" id="ui-lang-switch" aria-label={t[I18nKey.uiLanguage]} title={t[I18nKey.uiLanguage]}
+	        data-i18n-aria-label="uiLanguage" data-i18n-title="uiLanguage"
 	        class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90">
 		<Icon name="material-symbols:globe" class="text-[1.25rem]"></Icon>
 	</button>
