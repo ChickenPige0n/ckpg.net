@@ -1,10 +1,11 @@
 ---
-title: Dufs
+title: Dufs - 推荐工具
 published: 2026-08-01
-description: "一个我一直在用的工具"
+description: "独特的实用型文件服务器"
 image: ''
 tags:
   - tools
+  - rust
 category: 'Coding'
 draft: false 
 lang: ''

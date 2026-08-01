@@ -1,10 +1,11 @@
 ---
-title: Dufs
+title: Dufs - Tool recommendation
 published: 2026-08-01
-description: "awesome tool I've been using"
+description: "distinctive utility file server"
 image: ''
 tags:
   - tools
+  - rust
 category: 'Coding'
 draft: false
 lang: en
