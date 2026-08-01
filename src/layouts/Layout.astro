@@ -72,10 +72,28 @@ const siteLang = lang.replace("_", "-");
 // Counterpart URL of this page in the other language ('' when none exists).
 // Used by the browser-preference detection below; mirrors the Navbar logic.
 const pageTargetLang = isEnglishLang(lang) ? "zh" : "en";
+const english = isEnglishLang(lang);
 const effectiveLangSwitchHref =
 	langSwitchHref !== undefined
 		? langSwitchHref
 		: getLangUrl(Astro.url.pathname, pageTargetLang);
+
+// Canonical URL plus hreflang alternates for the zh/en mirror of this page.
+// Alternates are only emitted when a counterpart exists (a post without a
+// translation has none); the site's default language is zh, so x-default
+// points at the zh version.
+const siteBase = Astro.site?.origin ?? "https://ckpg.net";
+const canonicalUrl = new URL(Astro.url.pathname, siteBase).toString();
+const alternates: { hreflang: string; href: string }[] = [];
+if (effectiveLangSwitchHref) {
+	const zhPath = english ? effectiveLangSwitchHref : Astro.url.pathname;
+	const enPath = english ? Astro.url.pathname : effectiveLangSwitchHref;
+	alternates.push(
+		{ hreflang: "zh-CN", href: new URL(zhPath, siteBase).toString() },
+		{ hreflang: "en", href: new URL(enPath, siteBase).toString() },
+		{ hreflang: "x-default", href: new URL(zhPath, siteBase).toString() },
+	);
+}
 
 const bannerOffsetByPosition = {
 	top: `${BANNER_HEIGHT_EXTEND}vh`,
@@ -95,6 +113,11 @@ const bannerOffset =
 	<head>
 
 		<title>{pageTitle}</title>
+
+		<link rel="canonical" href={canonicalUrl}>
+		{alternates.map((a) => (
+			<link rel="alternate" hreflang={a.hreflang} href={a.href}>
+		))}
 
 		<meta charset="UTF-8" />
 		<meta name="description" content={description || pageTitle}>
