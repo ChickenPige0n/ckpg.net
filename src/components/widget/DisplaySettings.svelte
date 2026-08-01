@@ -1,9 +1,9 @@
 <script lang="ts">
 import I18nKey from "@i18n/i18nKey";
 import { getTranslation } from "@i18n/translation";
-import { siteConfig } from "@/config";
 import Icon from "@iconify/svelte";
 import { getDefaultHue, getHue, setHue } from "@utils/setting-utils";
+import { siteConfig } from "@/config";
 
 export let lang: string = siteConfig.lang;
 const t = getTranslation(lang);

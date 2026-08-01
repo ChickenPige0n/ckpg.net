@@ -46,8 +46,16 @@ const english = isEnglishLang(postLang);
 
 // Available translations of this article (zh original / en mirror).
 const postIsZh = !english;
-const zhHref = postIsZh ? "" : langSiblingId ? getPostUrlBySlug(langSiblingId) : "";
-const enHref = postIsZh ? (langSiblingId ? getPostUrlBySlug(langSiblingId) : "") : "";
+const zhHref = postIsZh
+	? ""
+	: langSiblingId
+		? getPostUrlBySlug(langSiblingId)
+		: "";
+const enHref = postIsZh
+	? langSiblingId
+		? getPostUrlBySlug(langSiblingId)
+		: ""
+	: "";
 
 const { remarkPluginFrontmatter } = await render(entry);
 

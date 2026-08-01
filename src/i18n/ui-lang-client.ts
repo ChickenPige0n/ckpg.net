@@ -17,11 +17,10 @@ export function currentUiLang(): string {
 	let storedUi: string | null = null;
 	try {
 		storedUi = localStorage.getItem(UI_LANG_STORAGE);
-		prefs =
-			navigator.languages && navigator.languages.length
-				? [...navigator.languages]
-				: [navigator.language || ""];
-	} catch (e) {
+		prefs = navigator.languages?.length
+			? [...navigator.languages]
+			: [navigator.language || ""];
+	} catch {
 		/* ignore */
 	}
 	const pageLang =
@@ -76,7 +75,7 @@ export function selectUiLang(code: string): void {
 		} else {
 			localStorage.removeItem(FULL_LANG_STORAGE);
 		}
-	} catch (e) {
+	} catch {
 		/* ignore */
 	}
 	applyUiLang(code);

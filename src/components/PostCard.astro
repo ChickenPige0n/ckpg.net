@@ -2,9 +2,9 @@
 import { type CollectionEntry, render } from "astro:content";
 import path from "node:path";
 import { Icon } from "astro-icon/components";
+import { siteConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { getTranslation } from "../i18n/translation";
-import { siteConfig } from "../config";
 import { getContentDir } from "../utils/url-utils";
 import ImageWrapper from "./misc/ImageWrapper.astro";
 import PostMetadata from "./PostMeta.astro";

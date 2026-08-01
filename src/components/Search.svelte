@@ -1,10 +1,10 @@
 <script lang="ts">
 import I18nKey from "@i18n/i18nKey";
 import { getTranslation } from "@i18n/translation";
-import { siteConfig } from "@/config";
 import Icon from "@iconify/svelte";
 import { url } from "@utils/url-utils.ts";
 import { onMount } from "svelte";
+import { siteConfig } from "@/config";
 import type { SearchResult } from "@/global";
 
 export let lang: string = siteConfig.lang;

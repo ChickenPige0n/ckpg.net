@@ -1,9 +1,8 @@
 <script lang="ts">
 import { onMount } from "svelte";
-
+import { siteConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { getTranslation } from "../i18n/translation";
-import { siteConfig } from "../config";
 import { getPostUrlBySlug } from "../utils/url-utils";
 
 export let tags: string[];

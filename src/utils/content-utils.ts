@@ -1,8 +1,8 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
 import { getTranslation, isEnglishLang } from "@i18n/translation";
-import { siteConfig } from "@/config";
 import { getCategoryUrl } from "@utils/url-utils.ts";
+import { siteConfig } from "@/config";
 
 export type PostData = {
 	title: string;
@@ -41,7 +41,9 @@ async function getRawSortedPosts(
 		return import.meta.env.PROD ? (data as PostData).draft !== true : true;
 	});
 
-	const filtered = allBlogPosts.filter((post) => isEnId(post.id) === targetEnglish);
+	const filtered = allBlogPosts.filter(
+		(post) => isEnId(post.id) === targetEnglish,
+	);
 
 	const sorted = filtered.sort((a, b) => {
 		const dateA = new Date((a.data as PostData).published);
@@ -98,7 +100,9 @@ export type Tag = {
 	count: number;
 };
 
-export async function getTagList(lang: string = siteConfig.lang): Promise<Tag[]> {
+export async function getTagList(
+	lang: string = siteConfig.lang,
+): Promise<Tag[]> {
 	const targetEnglish = isEnglishLang(lang);
 	const allBlogPosts = await getCollection("posts", ({ data }) => {
 		return import.meta.env.PROD ? (data as PostData).draft !== true : true;
