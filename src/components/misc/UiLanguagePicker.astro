@@ -1,0 +1,71 @@
+---
+import { Icon } from "astro-icon/components";
+import { UI_LANGS } from "../../i18n/ui-language";
+
+interface Props {
+	class?: string;
+}
+
+const className = Astro.props.class;
+---
+
+<div class:list={[className, "relative"]}>
+	<button type="button" id="ui-lang-switch" aria-label="Interface language" title="Interface language"
+	        class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90">
+		<Icon name="material-symbols:globe" class="text-[1.25rem]"></Icon>
+	</button>
+	<div id="ui-lang-panel" class="hidden absolute z-50 top-11 right-0 pt-5">
+		<div class="card-base float-panel p-2">
+			{UI_LANGS.map((l) => (
+				<button type="button" data-ui-lang={l.code}
+				        class="flex transition whitespace-nowrap items-center justify-between! w-full btn-plain scale-animation rounded-lg h-9 px-3 font-medium active:scale-95 mb-0.5">
+					<span>{l.label}</span>
+					<Icon name="material-symbols:check-rounded" class="ui-lang-check hidden text-[1.1rem] text-(--primary)"></Icon>
+				</button>
+			))}
+		</div>
+	</div>
+</div>
+
+<script>
+	import { currentUiLang, selectUiLang } from "../../i18n/ui-lang-client";
+
+	function initUiLangPicker() {
+		const btn = document.getElementById("ui-lang-switch");
+		const panel = document.getElementById("ui-lang-panel");
+		if (!btn || !panel) return;
+
+		const close = () => panel.classList.add("hidden");
+		const toggle = (e: Event) => {
+			e.stopPropagation();
+			panel.classList.toggle("hidden");
+		};
+
+		btn.addEventListener("click", toggle);
+		document.addEventListener("click", (e) => {
+			if (!panel.contains(e.target as Node)) close();
+		});
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape") close();
+		});
+
+		// Highlight the active language and wire up selection.
+		const current = currentUiLang();
+		panel.querySelectorAll("[data-ui-lang]").forEach((el) => {
+			const code = el.getAttribute("data-ui-lang");
+			const check = el.querySelector(".ui-lang-check");
+			if (code === current) {
+				el.classList.add("current-theme-btn");
+				if (check) check.classList.remove("hidden");
+			}
+			el.addEventListener("click", () => {
+				// selectUiLang applies the chrome immediately and moves the
+				// highlight in every picker (desktop + mobile).
+				selectUiLang(code || "");
+				close();
+			});
+		});
+	}
+
+	initUiLangPicker();
+</script>

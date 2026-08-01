@@ -30,9 +30,12 @@ export const vi: Translation = {
 	[Key.darkMode]: "Tối",
 	[Key.systemMode]: "Hệ thống",
 
+	[Key.uiLanguage]: "Ngôn ngữ giao diện",
+	[Key.articleLanguage]: "Ngôn ngữ bài viết",
 	[Key.more]: "Thêm",
 
 	[Key.author]: "Tác giả",
 	[Key.publishedAt]: "Đăng vào lúc",
+	[Key.translatedBy]: "Dịch bởi {translatedBy}",
 	[Key.license]: "Giấy phép bản quyền",
 };

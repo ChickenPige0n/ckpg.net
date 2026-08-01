@@ -42,7 +42,21 @@ export function getTranslation(lang: string): Translation {
 	return map[lang.toLowerCase()] || defaultTranslation;
 }
 
+/** English content (the `en/` prefix and `lang: en` frontmatter). */
+export function isEnglishLang(lang: string): boolean {
+	return lang.toLowerCase().startsWith("en");
+}
+
 export function i18n(key: I18nKey): string {
 	const lang = siteConfig.lang || "en";
 	return getTranslation(lang)[key];
+}
+
+export function renderTemplate(
+	template: string,
+	data: Record<string, string | number>,
+): string {
+	return template.replace(/\{(\w+)\}/g, (match, key) => {
+		return String(data[key] ?? match);
+	});
 }

@@ -2,12 +2,18 @@
 import { onMount } from "svelte";
 
 import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
+import { getTranslation } from "../i18n/translation";
+import { siteConfig } from "../config";
 import { getPostUrlBySlug } from "../utils/url-utils";
 
 export let tags: string[];
 export let categories: string[];
+export let lang: string = siteConfig.lang;
 export let sortedPosts: Post[] = [];
+
+const t = getTranslation(lang);
+const countLabel = (n: number) =>
+	n === 1 ? t[I18nKey.postCount] : t[I18nKey.postsCount];
 
 const params = new URLSearchParams(window.location.search);
 tags = params.has("tag") ? params.getAll("tag") : [];
@@ -102,9 +108,7 @@ onMount(async () => {
         </div>
         <div class="w-[70%] md:w-[80%] transition text-left text-50">
           {group.posts.length}
-          {i18n(
-            group.posts.length === 1 ? I18nKey.postCount : I18nKey.postsCount,
-          )}
+          {countLabel(group.posts.length)}
         </div>
       </div>
 

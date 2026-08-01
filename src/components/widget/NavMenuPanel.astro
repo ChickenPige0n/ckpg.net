@@ -1,13 +1,18 @@
 ---
 import { Icon } from "astro-icon/components";
+import I18nKey from "../../i18n/i18nKey";
+import { getTranslation } from "../../i18n/translation";
+import { UI_LANGS } from "../../i18n/ui-language";
 import { type NavBarLink } from "../../types/config";
 import { url } from "../../utils/url-utils";
 
 interface Props {
 	links: NavBarLink[];
+	lang?: string;
 }
 
-const links = Astro.props.links;
+const { links, lang = "zh_CN" } = Astro.props;
+const t = getTranslation(lang);
 ---
 <div id="nav-menu-panel" class:list={["float-panel float-panel-closed absolute transition-all right-4 px-2 py-2"]}>
     {links.map((link) => (
@@ -17,7 +22,7 @@ const links = Astro.props.links;
            target={link.external ? "_blank" : null}
         >
             <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-(--primary) group-active:text-(--primary)">
-                {link.name}
+                <span data-i18n={link.i18nKey}>{link.name}</span>
             </div>
             {!link.external && <Icon name="material-symbols:chevron-right-rounded"
                   class="transition text-[1.25rem] text-(--primary)"
@@ -29,4 +34,46 @@ const links = Astro.props.links;
             </Icon>}
         </a>
     ))}
+    <div class="border-(--line-divider) border-t my-2 pt-2">
+        <div class="flex items-center gap-2 px-3 py-1 text-sm text-black/40 dark:text-white/40" data-i18n="uiLanguage">
+            <Icon name="material-symbols:globe" class="text-base"></Icon>
+            {t[I18nKey.uiLanguage]}
+        </div>
+        <div class="grid grid-cols-2 gap-1 max-h-56 overflow-y-auto">
+            {UI_LANGS.map((l) => (
+                <button type="button" data-ui-lang={l.code}
+                        class="flex transition whitespace-nowrap items-center justify-between w-full btn-plain scale-animation rounded-lg h-8 px-3 text-sm font-medium active:scale-95">
+                    <span>{l.label}</span>
+                    <Icon name="material-symbols:check-rounded" class="ui-lang-check hidden text-[1rem] text-(--primary)"></Icon>
+                </button>
+            ))}
+        </div>
+    </div>
 </div>
+
+<script>
+	import { currentUiLang, selectUiLang } from "../../i18n/ui-lang-client";
+
+	// Mobile menu: pick a UI language from the inline list.
+	function initMobileUiLangs() {
+		const panel = document.getElementById("nav-menu-panel");
+		if (!panel) return;
+
+		const current = currentUiLang();
+		panel.querySelectorAll("[data-ui-lang]").forEach((el) => {
+			const code = el.getAttribute("data-ui-lang");
+			if (code === current) {
+				el.classList.add("current-theme-btn");
+				const check = el.querySelector(".ui-lang-check");
+				if (check) check.classList.remove("hidden");
+			}
+			el.addEventListener("click", () => {
+				// selectUiLang applies the chrome immediately and moves the
+				// highlight in every picker (desktop + mobile).
+				selectUiLang(code || "");
+			});
+		});
+	}
+
+	initMobileUiLangs();
+</script>

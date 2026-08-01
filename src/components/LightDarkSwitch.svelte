@@ -1,7 +1,8 @@
 <script lang="ts">
 import { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants.ts";
 import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
+import { getTranslation } from "@i18n/translation";
+import { siteConfig } from "@/config";
 import Icon from "@iconify/svelte";
 import {
 	applyThemeToDocument,
@@ -12,6 +13,8 @@ import { onMount } from "svelte";
 import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 
 const seq: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE, AUTO_MODE];
+let { lang = siteConfig.lang }: { lang?: string } = $props();
+const t = getTranslation(lang);
 let mode: LIGHT_DARK_MODE = $state(AUTO_MODE);
 
 onMount(() => {
@@ -101,7 +104,7 @@ function hidePanel() {
           icon="material-symbols:wb-sunny-outline-rounded"
           class="text-[1.25rem] mr-3"
         ></Icon>
-        {i18n(I18nKey.lightMode)}
+        <span data-i18n="lightMode">{t[I18nKey.lightMode]}</span>
       </button>
       <button
         class="flex transition whitespace-nowrap items-center justify-start! w-full btn-plain scale-animation rounded-lg h-9 px-3 font-medium active:scale-95 mb-0.5"
@@ -112,7 +115,7 @@ function hidePanel() {
           icon="material-symbols:dark-mode-outline-rounded"
           class="text-[1.25rem] mr-3"
         ></Icon>
-        {i18n(I18nKey.darkMode)}
+        <span data-i18n="darkMode">{t[I18nKey.darkMode]}</span>
       </button>
       <button
         class="flex transition whitespace-nowrap items-center justify-start! w-full btn-plain scale-animation rounded-lg h-9 px-3 font-medium active:scale-95"
@@ -123,7 +126,7 @@ function hidePanel() {
           icon="material-symbols:radio-button-partial-outline"
           class="text-[1.25rem] mr-3"
         ></Icon>
-        {i18n(I18nKey.systemMode)}
+        <span data-i18n="systemMode">{t[I18nKey.systemMode]}</span>
       </button>
     </div>
   </div>

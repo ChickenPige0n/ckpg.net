@@ -54,6 +54,8 @@ export type NavBarLink = {
 	name: string;
 	url: string;
 	external?: boolean;
+	/** Translation key used for client-side UI language application. */
+	i18nKey?: string;
 };
 
 export type NavBarConfig = {

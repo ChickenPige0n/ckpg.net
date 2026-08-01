@@ -30,9 +30,12 @@ export const th: Translation = {
 	[Key.darkMode]: "มืด",
 	[Key.systemMode]: "ตามระบบ",
 
+	[Key.uiLanguage]: "ภาษาของอินเทอร์เฟซ",
+	[Key.articleLanguage]: "ภาษาของบทความ",
 	[Key.more]: "ดูเพิ่ม",
 
 	[Key.author]: "ผู้เขียน",
 	[Key.publishedAt]: "เผยแพร่เมื่อ",
+	[Key.translatedBy]: "แปลโดย {translatedBy}",
 	[Key.license]: "สัญญาอนุญาต",
 };

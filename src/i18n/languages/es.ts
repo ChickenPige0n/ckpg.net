@@ -30,9 +30,12 @@ export const es: Translation = {
 	[Key.darkMode]: "Oscuro",
 	[Key.systemMode]: "Sistema",
 
+	[Key.uiLanguage]: "Idioma de la interfaz",
+	[Key.articleLanguage]: "Idioma del artículo",
 	[Key.more]: "Más",
 
 	[Key.author]: "Autor",
 	[Key.publishedAt]: "Publicado el",
+	[Key.translatedBy]: "Traducido por {translatedBy}",
 	[Key.license]: "Licencia",
 };

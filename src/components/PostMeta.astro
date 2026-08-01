@@ -1,7 +1,8 @@
 ---
 import { Icon } from "astro-icon/components";
 import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
+import { getTranslation } from "../i18n/translation";
+import { siteConfig } from "../config";
 import { formatDateToYYYYMMDD } from "../utils/date-utils";
 import { getCategoryUrl, getTagUrl } from "../utils/url-utils";
 
@@ -13,6 +14,7 @@ interface Props {
 	category: string | null;
 	hideTagsForMobile?: boolean;
 	hideUpdateDate?: boolean;
+	lang?: string;
 }
 const {
 	published,
@@ -21,8 +23,10 @@ const {
 	category,
 	hideTagsForMobile = false,
 	hideUpdateDate = false,
+	lang,
 } = Astro.props;
 const className = Astro.props.class;
+const t = getTranslation(lang || siteConfig.lang);
 ---
 
 <div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
@@ -53,10 +57,10 @@ const className = Astro.props.class;
             <Icon name="material-symbols:book-2-outline-rounded" class="text-xl"></Icon>
         </div>
         <div class="flex flex-row flex-nowrap items-center">
-            <a href={getCategoryUrl(category)} aria-label={`View all posts in the ${category} category`}
+            <a href={getCategoryUrl(category, lang || siteConfig.lang)} aria-label={`View all posts in the ${category} category`}
                class="link-lg transition text-50 text-sm font-medium
                             hover:text-(--primary) dark:hover:text-(--primary) whitespace-nowrap">
-                {category || i18n(I18nKey.uncategorized)}
+                {category ? category : <span data-i18n="uncategorized">{t[I18nKey.uncategorized]}</span>}
             </a>
         </div>
     </div>
@@ -70,13 +74,13 @@ const className = Astro.props.class;
         <div class="flex flex-row flex-nowrap items-center">
             {(tags && tags.length > 0) && tags.map((tag, i) => (
                 <div class:list={[{"hidden": i == 0}, "mx-1.5 text-(--meta-divider) text-sm"]}>/</div>
-                <a href={getTagUrl(tag)} aria-label={`View all posts with the ${tag.trim()} tag`}
+                <a href={getTagUrl(tag, lang || siteConfig.lang)} aria-label={`View all posts with the ${tag.trim()} tag`}
                    class="link-lg transition text-50 text-sm font-medium
                                 hover:text-(--primary) dark:hover:text-(--primary) whitespace-nowrap">
                     {tag.trim()}
                 </a>
             ))}
-            {!(tags && tags.length > 0) && <div class="transition text-50 text-sm font-medium">{i18n(I18nKey.noTags)}</div>}
+            {!(tags && tags.length > 0) && <div class="transition text-50 text-sm font-medium" data-i18n="noTags">{t[I18nKey.noTags]}</div>}
         </div>
     </div>
 </div>

@@ -1,18 +1,19 @@
 ---
 title: Dufs
 published: 2026-08-01
-description: "一个我一直在用的超棒工具"
+description: "一个我一直在用的工具"
 image: ''
 tags:
   - tools
 category: 'Coding'
 draft: false 
 lang: ''
+translatedBy: deepseek-v4-flash (人工修订)
 ---
 
 # 文件托管
 
-`python -m http.server` 是个广为人知的工具，它带来的便利在于能快速在局域网或公网上托管你的文件。
+`python -m http.server` 是个众所周知的工具，它能让你快速地在局域网或公网上托管/分享你的文件。
 
 ```sh
 python -m http.server -help
@@ -38,16 +39,17 @@ options:
 ```
 
 然而，
-+ 它不支持上传，也没有其他我希望一个实用文件服务器拥有的功能
-+ 它是一个 **python** 模块，出于种种原因我不喜欢它
-+ 有太多人在使用和推荐这个工具，而明明存在一些更好的替代品
++ 它不支持上传，也没有我(可能)想要的一些功能
++ 它是一个 **python** 模块，而我不喜欢 Python
++ 很多人(存疑)在使用和推荐这个工具 ~~不小众了我不用了~~，但我认为 dufs 更好用
 
 
-以下内容摘自其 README.md：
+以下内容摘自dufs项目的 README.md：
+
+不再多说
 
 ::github{repo="sigoden/dufs"}
 
-我想已经不必再多解释它总体上为什么更好了。
 
 # Dufs
 

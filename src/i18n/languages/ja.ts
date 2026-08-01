@@ -30,9 +30,12 @@ export const ja: Translation = {
 	[Key.darkMode]: "ダーク",
 	[Key.systemMode]: "システム",
 
+	[Key.uiLanguage]: "インターフェース言語",
+	[Key.articleLanguage]: "記事の言語",
 	[Key.more]: "もっと",
 
 	[Key.author]: "作者",
 	[Key.publishedAt]: "公開日",
+	[Key.translatedBy]: "{translatedBy} による翻訳",
 	[Key.license]: "ライセンス",
 };

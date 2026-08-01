@@ -18,7 +18,8 @@ import {
 } from "../constants/constants";
 import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
-import { pathsEqual, url } from "../utils/url-utils";
+import { isEnglishLang } from "../i18n/translation";
+import { getLangUrl, pathsEqual, url } from "../utils/url-utils";
 import "katex/dist/katex.css";
 
 interface Props {
@@ -27,14 +28,18 @@ interface Props {
 	description?: string;
 	lang?: string;
 	setOGTypeArticle?: boolean;
+	langSwitchHref?: string;
 }
 
-let { title, banner, description, lang, setOGTypeArticle } = Astro.props;
+let { title, banner, description, lang, setOGTypeArticle, langSwitchHref } =
+	Astro.props;
 
 // apply a class to the body element to decide the height of the banner, only used for initial page load
 // Swup can update the body for each page visit, but it's after the page transition, causing a delay for banner height change
 // so use Swup hooks instead to change the height immediately when a link is clicked
-const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
+const isHomePage =
+	pathsEqual(Astro.url.pathname, url("/")) ||
+	pathsEqual(Astro.url.pathname, url("/en/"));
 
 // defines global css variables
 // why doing this in Layout instead of GlobalStyles: https://github.com/withastro/astro/issues/6728#issuecomment-1502203757
@@ -64,6 +69,14 @@ if (!lang) {
 }
 const siteLang = lang.replace("_", "-");
 
+// Counterpart URL of this page in the other language ('' when none exists).
+// Used by the browser-preference detection below; mirrors the Navbar logic.
+const pageTargetLang = isEnglishLang(lang) ? "zh" : "en";
+const effectiveLangSwitchHref =
+	langSwitchHref !== undefined
+		? langSwitchHref
+		: getLangUrl(Astro.url.pathname, pageTargetLang);
+
 const bannerOffsetByPosition = {
 	top: `${BANNER_HEIGHT_EXTEND}vh`,
 	center: `${BANNER_HEIGHT_EXTEND / 2}vh`,
@@ -76,6 +89,8 @@ const bannerOffset =
 <!DOCTYPE html>
 <html lang={siteLang} class="bg-(--page-bg) transition text-[14px] md:text-[16px]"
 	  data-overlayscrollbars-initialize
+	  data-page-lang={lang}
+	  data-lang-switch-href={effectiveLangSwitchHref}
 >
 	<head>
 
@@ -109,6 +124,70 @@ const bannerOffset =
 				  media={favicon.theme && `(prefers-color-scheme: ${favicon.theme})`}
 			/>
 		))}
+
+		<!-- Honor the visitor's language preference: upgrade the zh default to
+		     English on first visit when the browser prefers English, and always
+		     respect an explicit choice made via the UI language picker (stored
+		     under 'ckpg-ui-lang') or the content switch (stored under
+		     'ckpg-lang'). -->
+		<script is:inline>
+			(function () {
+				try {
+					const html = document.documentElement;
+					const pageLang = html.getAttribute('data-page-lang') || '';
+					const switchHref = html.getAttribute('data-lang-switch-href') || '';
+					const isEn = (l) => typeof l === 'string' && l.toLowerCase().indexOf('en') === 0;
+					const isZh = (l) => typeof l === 'string' && l.toLowerCase().indexOf('zh') === 0;
+					const currentEn = isEn(pageLang);
+
+					let stored = null;
+					let storedUi = null;
+					try {
+						stored = localStorage.getItem('ckpg-lang');
+						storedUi = localStorage.getItem('ckpg-ui-lang');
+					} catch (e) {}
+
+					let shouldGoEn = false;
+					let shouldGoZh = false;
+					if (stored === 'en') {
+						shouldGoEn = !currentEn;
+					} else if (stored === 'zh') {
+						shouldGoZh = currentEn;
+					} else if (!storedUi && !currentEn) {
+						// First visit without an explicit choice: only upgrade
+						// zh -> en, never bounce a visitor who landed on an
+						// /en/ page directly.
+						let prefs = [];
+						try {
+							prefs = navigator.languages && navigator.languages.length
+								? navigator.languages
+								: (navigator.language ? [navigator.language] : []);
+						} catch (e) {}
+						for (let i = 0; i < prefs.length; i++) {
+							if (isEn(prefs[i])) { shouldGoEn = true; break; }
+							if (isZh(prefs[i])) { break; }
+						}
+					}
+
+					if ((shouldGoEn || shouldGoZh) && switchHref && switchHref !== location.pathname) {
+						location.replace(switchHref);
+					}
+				} catch (e) {}
+
+				// Remember the visitor's explicit article-language choice (the
+				// 中文/English toggle on post pages) so the detection above
+				// does not fight it on later visits.
+				document.addEventListener('click', function (e) {
+					var el = e.target && e.target.closest ? e.target.closest('[data-lang-switch]') : null;
+					if (el) {
+						var lang = el.getAttribute('data-lang-switch');
+						if (lang) {
+							try { localStorage.setItem('ckpg-lang', lang); } catch (err) {}
+						}
+					}
+				});
+			})();
+		</script>
 
 		<!-- Set the theme before the page is rendered to avoid a flash -->
 		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue}}>
@@ -159,6 +238,95 @@ const bannerOffset =
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
 	</body>
 </html>
+
+<script>
+	import {
+		applyUiLang,
+		FULL_LANG_STORAGE,
+		normalizeLang,
+		resolveUiLang,
+		UI_LANG_STORAGE,
+	} from "../i18n/ui-language";
+
+	// Partially apply the visitor's preferred language to the UI chrome when
+	// that language has a dictionary but no translated content. An explicit
+	// UI pick (UI_LANG_STORAGE) wins over browser preferences, and the head
+	// script's full-language redirect always takes precedence (skip when it
+	// is about to navigate).
+	const html = document.documentElement;
+	const pageLang = html.getAttribute("data-page-lang") || "";
+	const switchHref = html.getAttribute("data-lang-switch-href") || "";
+	const isEn = (l: string) => l.toLowerCase().startsWith("en");
+
+	const readPrefs = (): {
+		storedFull: string | null;
+		storedUi: string | null;
+		prefs: string[];
+	} => {
+		try {
+			return {
+				storedFull: localStorage.getItem(FULL_LANG_STORAGE),
+				storedUi: localStorage.getItem(UI_LANG_STORAGE),
+				prefs:
+					navigator.languages && navigator.languages.length
+						? [...navigator.languages]
+						: [navigator.language || ""],
+			};
+		} catch (e) {
+			return { storedFull: null, storedUi: null, prefs: [] };
+		}
+	};
+	const { storedFull, storedUi, prefs } = readPrefs();
+
+	// Replicate the head script's redirect decision: an explicit content
+	// choice ('en'/'zh'), or an English browser preference without any
+	// explicit choice, triggers a full /en/ (or /zh/) navigation.
+	let willRedirect = false;
+	if (storedFull === "en") {
+		willRedirect = !isEn(pageLang);
+	} else if (storedFull === "zh") {
+		willRedirect = isEn(pageLang);
+	} else if (!storedFull && !storedUi && !isEn(pageLang)) {
+		for (const pref of prefs) {
+			if (isEn(pref)) {
+				willRedirect = true;
+				break;
+			}
+			if (pref.toLowerCase().startsWith("zh")) break;
+		}
+	}
+
+	if (!(willRedirect && switchHref && switchHref !== location.pathname)) {
+		const resolveCurrent = () => {
+			const { storedUi, prefs } = readPrefs();
+			return resolveUiLang(prefs, storedUi);
+		};
+		const uiLang = resolveCurrent();
+		if (uiLang && normalizeLang(pageLang) !== uiLang) {
+			applyUiLang(uiLang);
+			// Islands (Svelte components) mount after initial render, and swup
+			// swaps page content, so re-apply whenever the DOM grows. The
+			// language is re-resolved on every mutation so an explicit picker
+			// choice (persisted to UI_LANG_STORAGE) keeps winning instead of
+			// being overwritten by the original browser-preference value.
+			let applying = false;
+			new MutationObserver(() => {
+				if (applying) return;
+				const lang = resolveCurrent();
+				if (!lang || normalizeLang(pageLang) === lang) return;
+				applying = true;
+				try {
+					applyUiLang(lang);
+				} finally {
+					applying = false;
+				}
+			}).observe(document.body, {
+				childList: true,
+				subtree: true,
+			});
+		}
+	}
+</script>
 
 <style is:global define:vars={{
 	bannerOffset,
@@ -409,7 +577,7 @@ const setup = () => {
 	window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
 		// change banner height immediately when a link is clicked
 		const bodyElement = document.querySelector('body')
-		if (pathsEqual(visit.to.url, url('/'))) {
+		if (pathsEqual(visit.to.url, url('/')) || pathsEqual(visit.to.url, url('/en/'))) {
 			bodyElement!.classList.add('lg:is-home');
 		} else {
 			bodyElement!.classList.remove('lg:is-home');

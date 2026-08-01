@@ -4,9 +4,12 @@ import path from "node:path";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
+import {
+	getTranslation,
+	renderTemplate,
+} from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts } from "@utils/content-utils";
+import { getLangSiblingId, getSortedPosts } from "@utils/content-utils";
 import { getContentDir, getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
@@ -15,15 +18,34 @@ import { licenseConfig, profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
 
 export async function getStaticPaths() {
-	const blogEntries = await getSortedPosts();
-	return blogEntries.map((entry) => ({
-		params: { slug: entry.id },
-		props: { entry },
-	}));
+	const blogEntries = [
+		...(await getSortedPosts()),
+		...(await getSortedPosts("en")),
+	];
+	const ids = new Set(blogEntries.map((entry) => entry.id));
+	return blogEntries.map((entry) => {
+		const langSiblingId = getLangSiblingId(entry.id);
+		return {
+			params: { slug: entry.id },
+			props: {
+				entry,
+				langSiblingId: ids.has(langSiblingId) ? langSiblingId : "",
+			},
+		};
+	});
 }
 
-const { entry } = Astro.props;
+const { entry, langSiblingId = "" } = Astro.props;
 const { Content, headings } = await render(entry);
+
+// Utility strings on the post page follow the post's own language.
+const postLang = entry.data.lang || siteConfig.lang;
+const t = getTranslation(postLang);
+
+// Available translations of this article (zh original / en mirror).
+const postIsZh = postLang === "zh_CN";
+const zhHref = postIsZh ? "" : langSiblingId ? getPostUrlBySlug(langSiblingId) : "";
+const enHref = postIsZh ? (langSiblingId ? getPostUrlBySlug(langSiblingId) : "") : "";
 
 const { remarkPluginFrontmatter } = await render(entry);
 
@@ -38,6 +60,14 @@ const jsonLd = {
 		name: profileConfig.name,
 		url: Astro.site,
 	},
+	...(entry.data.translatedBy
+		? {
+				translator: {
+					"@type": "Organization",
+					name: entry.data.translatedBy,
+				},
+			}
+		: {}),
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
 	inLanguage: entry.data.lang
 		? entry.data.lang.replace("_", "-")
@@ -45,28 +75,49 @@ const jsonLd = {
 	// TODO include cover image here
 };
 ---
-<MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings}>
+<MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={postLang} setOGTypeArticle={true} headings={headings} langSwitchHref={langSiblingId ? getPostUrlBySlug(langSiblingId) : ""}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     <div class="flex w-full rounded-(--radius-large) overflow-hidden relative mb-4">
         <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
             {}
         ]}>
             <!-- word count and reading time -->
-            <div class="flex flex-row text-black/30 dark:text-white/30 gap-5 mb-3 transition onload-animation">
-                <div class="flex flex-row items-center">
-                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
-                        <Icon name="material-symbols:notes-rounded"></Icon>
+            <div class="flex flex-row items-center justify-between mb-3 transition onload-animation">
+                <div class="flex flex-row text-black/30 dark:text-white/30 gap-5">
+                    <div class="flex flex-row items-center">
+                        <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
+                            <Icon name="material-symbols:notes-rounded"></Icon>
+                        </div>
+                        <div class="text-sm">{remarkPluginFrontmatter.words} {" " + t[I18nKey.wordsCount]}</div>
                     </div>
-                    <div class="text-sm">{remarkPluginFrontmatter.words} {" " + i18n(I18nKey.wordsCount)}</div>
+                    <div class="flex flex-row items-center">
+                        <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
+                            <Icon name="material-symbols:schedule-outline-rounded"></Icon>
+                        </div>
+                        <div class="text-sm">
+                            {remarkPluginFrontmatter.minutes} {" " + t[remarkPluginFrontmatter.minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount]}
+                        </div>
+                    </div>
                 </div>
-                <div class="flex flex-row items-center">
-                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
-                        <Icon name="material-symbols:schedule-outline-rounded"></Icon>
-                    </div>
-                    <div class="text-sm">
-                        {remarkPluginFrontmatter.minutes} {" " + i18n(remarkPluginFrontmatter.minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount)}
-                    </div>
-                </div>
+                    {(zhHref || enHref) && (
+                        <div class="flex flex-row items-center gap-2 text-sm shrink-0 ml-4">
+                            <span class="text-black/40 dark:text-white/40 hidden sm:inline" data-i18n="articleLanguage">{t[I18nKey.articleLanguage]}</span>
+                            <div class="flex flex-row items-center gap-1">
+                                {postIsZh ? (
+                                    <span class="btn-plain scale-animation current-theme-btn rounded-lg h-7 px-2.5 text-xs font-bold">中文</span>
+                                ) : zhHref ? (
+                                    <a href={zhHref} data-no-swup data-lang-switch="zh" aria-label="Read this article in Chinese"
+                                       class="btn-plain scale-animation rounded-lg h-7 px-2.5 text-xs font-bold active:scale-95">中文</a>
+                                ) : null}
+                                {!postIsZh ? (
+                                    <span class="btn-plain scale-animation current-theme-btn rounded-lg h-7 px-2.5 text-xs font-bold">English</span>
+                                ) : enHref ? (
+                                    <a href={enHref} data-no-swup data-lang-switch="en" aria-label="Read this article in English"
+                                       class="btn-plain scale-animation rounded-lg h-7 px-2.5 text-xs font-bold active:scale-95">English</a>
+                                ) : null}
+                            </div>
+                        </div>
+                    )}
             </div>
 
             <!-- title -->
@@ -91,7 +142,14 @@ const jsonLd = {
                         updated={entry.data.updated}
                         tags={entry.data.tags}
                         category={entry.data.category}
+                        lang={postLang}
                 ></PostMetadata>
+                {entry.data.translatedBy && (
+                    <div class="flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 mb-3">
+                        <Icon name="material-symbols:translate-rounded" class="text-base"></Icon>
+                        <span>{renderTemplate(t[I18nKey.translatedBy], { translatedBy: entry.data.translatedBy })}</span>
+                    </div>
+                )}
                 {!entry.data.image && <div class="border-(--line-divider) border-dashed border-b mb-5"></div>}
             </div>
 
@@ -106,7 +164,7 @@ const jsonLd = {
                 <Content />
             </Markdown>
 
-            {licenseConfig.enable && <License title={entry.data.title} slug={entry.id} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+            {licenseConfig.enable && <License title={entry.data.title} slug={entry.id} pubDate={entry.data.published} lang={postLang} class="mb-6 rounded-xl license-container onload-animation"></License>}
 
         </div>
     </div>

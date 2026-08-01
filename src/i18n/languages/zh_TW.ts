@@ -30,9 +30,12 @@ export const zh_TW: Translation = {
 	[Key.darkMode]: "暗色",
 	[Key.systemMode]: "跟隨系統",
 
+	[Key.uiLanguage]: "介面語言",
+	[Key.articleLanguage]: "文章語言",
 	[Key.more]: "更多",
 
 	[Key.author]: "作者",
 	[Key.publishedAt]: "發佈於",
+	[Key.translatedBy]: "由 {translatedBy} 翻譯",
 	[Key.license]: "許可協議",
 };

@@ -1,10 +1,14 @@
 <script lang="ts">
 import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
+import { getTranslation } from "@i18n/translation";
+import { siteConfig } from "@/config";
 import Icon from "@iconify/svelte";
 import { url } from "@utils/url-utils.ts";
 import { onMount } from "svelte";
 import type { SearchResult } from "@/global";
+
+export let lang: string = siteConfig.lang;
+const t = getTranslation(lang);
 
 let keywordDesktop = "";
 let keywordMobile = "";
@@ -151,7 +155,8 @@ $: if (initialized && keywordMobile) {
     class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"
   ></Icon>
   <input
-    placeholder={i18n(I18nKey.search)}
+    placeholder={t[I18nKey.search]}
+    data-i18n-placeholder="search"
     bind:value={keywordDesktop}
     on:focus={() => search(keywordDesktop, true)}
     class="transition-all pl-10 text-sm bg-transparent outline-0
@@ -188,7 +193,8 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2"
       class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"
     ></Icon>
     <input
-      placeholder="Search"
+      placeholder={t[I18nKey.search]}
+      data-i18n-placeholder="search"
       bind:value={keywordMobile}
       class="pl-10 absolute inset-0 text-sm bg-transparent outline-0
                focus:w-60 text-black/50 dark:text-white/50"

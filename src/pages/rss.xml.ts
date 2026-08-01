@@ -17,7 +17,14 @@ function stripInvalidXmlChars(str: string): string {
 }
 
 export async function GET(context: APIContext): Promise<Response> {
-	const blog = await getSortedPosts();
+	const blog = [
+		...(await getSortedPosts()),
+		...(await getSortedPosts("en")),
+	].sort((a, b) => {
+		const dateA = new Date(a.data.published);
+		const dateB = new Date(b.data.published);
+		return dateA > dateB ? -1 : 1;
+	});
 
 	return rss({
 		title: siteConfig.title,

@@ -30,9 +30,12 @@ export const id: Translation = {
 	[Key.darkMode]: "Gelap",
 	[Key.systemMode]: "Sistem",
 
+	[Key.uiLanguage]: "Bahasa antarmuka",
+	[Key.articleLanguage]: "Bahasa artikel",
 	[Key.more]: "Lainnya",
 
 	[Key.author]: "Penulis",
 	[Key.publishedAt]: "Diterbitkan pada",
+	[Key.translatedBy]: "Diterjemahkan oleh {translatedBy}",
 	[Key.license]: "Lisensi",
 };

@@ -30,9 +30,12 @@ export const tr: Translation = {
 	[Key.darkMode]: "Koyu",
 	[Key.systemMode]: "Sistem",
 
+	[Key.uiLanguage]: "Arayüz dili",
+	[Key.articleLanguage]: "Makale dili",
 	[Key.more]: "Daha Fazla",
 
 	[Key.author]: "Yazar",
 	[Key.publishedAt]: "Yayınlanma:",
+	[Key.translatedBy]: "Çeviren {translatedBy}",
 	[Key.license]: "Lisans",
 };

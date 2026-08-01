@@ -1,9 +1,12 @@
 <script lang="ts">
 import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
+import { getTranslation } from "@i18n/translation";
+import { siteConfig } from "@/config";
 import Icon from "@iconify/svelte";
 import { getDefaultHue, getHue, setHue } from "@utils/setting-utils";
 
+export let lang: string = siteConfig.lang;
+const t = getTranslation(lang);
 let hue = getHue();
 const defaultHue = getDefaultHue();
 
@@ -26,7 +29,7 @@ $: if (hue || hue === 0) {
             before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
             before:absolute before:-left-3 before:top-[0.33rem]"
     >
-      {i18n(I18nKey.themeColor)}
+      <span data-i18n="themeColor">{t[I18nKey.themeColor]}</span>
       <button
         aria-label="Reset to Default"
         class="btn-regular w-7 h-7 rounded-md active:scale-90 will-change-transform"
@@ -54,7 +57,7 @@ $: if (hue || hue === 0) {
     class="w-full h-6 px-1 bg-[oklch(0.80_0.10_0)] dark:bg-[oklch(0.70_0.10_0)] rounded select-none"
   >
     <input
-      aria-label={i18n(I18nKey.themeColor)}
+      aria-label={t[I18nKey.themeColor]}
       type="range"
       min="0"
       max="360"

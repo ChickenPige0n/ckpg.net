@@ -30,9 +30,12 @@ export const ko: Translation = {
 	[Key.darkMode]: "어두운 모드",
 	[Key.systemMode]: "시스템 모드",
 
+	[Key.uiLanguage]: "인터페이스 언어",
+	[Key.articleLanguage]: "문서 언어",
 	[Key.more]: "더 보기",
 
 	[Key.author]: "저자",
 	[Key.publishedAt]: "게시일",
+	[Key.translatedBy]: "{translatedBy} 번역",
 	[Key.license]: "라이선스",
 };

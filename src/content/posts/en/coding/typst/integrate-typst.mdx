@@ -1,0 +1,29 @@
+---
+title: Integrating Typst into This Site
+published: 2026-06-29
+description: 'OverflowCat/astro-typst'
+image: ''
+tags:
+  - this-site
+  - Typst
+category: 'Coding'
+draft: false
+lang: en
+translatedBy: deepseek-v4-flash
+---
+
+Typst integration on this site is implemented with this library:
+::github{repo="OverflowCat/astro-typst"}
+
+There's a dependency conflict, but it works.
+```
+└─┬ astro-typst 0.12.3
+  └─┬ astro-integration-kit 0.19.1
+    └── ✕ unmet peer astro@"^4.14.0 || ^5.0.0": found 7.0.3
+```
+
+import Example from './example.typ';
+
+<Example />
+
+Yay, it's Typst

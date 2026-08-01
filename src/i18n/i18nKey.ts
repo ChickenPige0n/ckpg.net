@@ -29,9 +29,13 @@ enum I18nKey {
 
 	more = "more",
 
+	uiLanguage = "uiLanguage",
+	articleLanguage = "articleLanguage",
+
 	author = "author",
 	publishedAt = "publishedAt",
 	license = "license",
+	translatedBy = "translatedBy",
 }
 
 export default I18nKey;

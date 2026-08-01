@@ -30,9 +30,12 @@ export const en: Translation = {
 	[Key.darkMode]: "Dark",
 	[Key.systemMode]: "System",
 
+	[Key.uiLanguage]: "Interface language",
+	[Key.articleLanguage]: "Article language",
 	[Key.more]: "More",
 
 	[Key.author]: "Author",
 	[Key.publishedAt]: "Published at",
+	[Key.translatedBy]: "Translated by {translatedBy}",
 	[Key.license]: "License",
 };
