@@ -9,6 +9,9 @@ import type { SearchResult } from "@/global";
 
 export let lang: string = siteConfig.lang;
 const t = getTranslation(lang);
+// Search results follow the content language of the page the visitor is on,
+// so a search from /en/ pages never surfaces zh-only posts (and vice versa).
+const english = lang.toLowerCase().startsWith("en");
 
 let keywordDesktop = "";
 let keywordMobile = "";
@@ -68,7 +71,9 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 		let searchResults: SearchResult[] = [];
 
 		if (import.meta.env.PROD && pagefindLoaded && window.pagefind) {
-			const response = await window.pagefind.search(keyword);
+			const response = await window.pagefind.search(keyword, {
+				filter: { lang: english ? "en" : "zh" },
+			});
 			searchResults = await Promise.all(
 				response.results.map((item) => item.data()),
 			);

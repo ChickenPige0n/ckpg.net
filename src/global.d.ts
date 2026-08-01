@@ -7,7 +7,10 @@ declare global {
 		// type from '@swup/astro' is incorrect
 		swup: AstroIntegration;
 		pagefind: {
-			search: (query: string) => Promise<{
+			search: (
+				query: string,
+				options?: { filter?: Record<string, string | string[] | boolean> },
+			) => Promise<{
 				results: Array<{
 					data: () => Promise<SearchResult>;
 				}>;
