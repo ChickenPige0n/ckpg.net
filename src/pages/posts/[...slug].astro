@@ -6,6 +6,7 @@ import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
 import {
 	getTranslation,
+	isEnglishLang,
 	renderTemplate,
 } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
@@ -41,9 +42,10 @@ const { Content, headings } = await render(entry);
 // Utility strings on the post page follow the post's own language.
 const postLang = entry.data.lang || siteConfig.lang;
 const t = getTranslation(postLang);
+const english = isEnglishLang(postLang);
 
 // Available translations of this article (zh original / en mirror).
-const postIsZh = postLang === "zh_CN";
+const postIsZh = !english;
 const zhHref = postIsZh ? "" : langSiblingId ? getPostUrlBySlug(langSiblingId) : "";
 const enHref = postIsZh ? (langSiblingId ? getPostUrlBySlug(langSiblingId) : "") : "";
 
