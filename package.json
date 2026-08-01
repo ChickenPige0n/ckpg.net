@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "check": "astro check",
+    "check": "astro check && node scripts/check-lang-siblings.js",
+    "prebuild": "node scripts/check-lang-siblings.js",
+    "check:langs": "node scripts/check-lang-siblings.js",
     "build": "astro build && pagefind --site dist --output-path dist/client/pagefind",
     "preview": "astro preview",
     "preview:cf": "wrangler dev dist/server/entry.mjs --config dist/server/wrangler.json --no-bundle",
