@@ -44,11 +44,16 @@ export type Favicon = {
 	sizes?: string;
 };
 
-export enum LinkPreset {
-	Home = 0,
-	Archive = 1,
-	About = 2,
-}
+// Declared as a const object instead of a TS `enum`: Node's native TypeScript
+// support (used to load astro.config.mjs) only strips types and cannot emit the
+// runtime object an enum requires. Members and their values are unchanged.
+export const LinkPreset = {
+	Home: 0,
+	Archive: 1,
+	About: 2,
+} as const;
+
+export type LinkPreset = (typeof LinkPreset)[keyof typeof LinkPreset];
 
 export type NavBarLink = {
 	name: string;

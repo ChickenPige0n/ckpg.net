@@ -5,7 +5,7 @@ import type {
 	ProfileConfig,
 	SiteConfig,
 } from "./types/config";
-import { LinkPreset } from "./types/config";
+import { LinkPreset } from "./types/config.ts";
 
 export const siteConfig: SiteConfig = {
 	title: "ChickenPige0n",

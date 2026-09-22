@@ -21,7 +21,7 @@ import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-di
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 import { expressiveCodeConfig } from "./src/config.ts";
-import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
+import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.ts";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
@@ -217,6 +217,16 @@ export default defineConfig({
 								"mdast-util-to-string",
 								"@astrojs/rss",
 								"@expressive-code/core",
+								// These are pulled in by generated/plugin code and would
+								// otherwise only be discovered on the first request. A
+								// late discovery makes Vite re-bundle the SSR deps
+								// mid-request, which rewrites the hashed chunk files and
+								// breaks in-flight imports ("The file does not exist at
+								// ... which is in the optimize deps directory").
+								"astro/loaders",
+								"astro-icon/components",
+								"@astrojs/svelte/server.js",
+								"astro-typst/dist/renderer/index.js",
 							],
 						},
 					};
