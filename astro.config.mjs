@@ -185,6 +185,38 @@ export default defineConfig({
 		plugins: [
 			tailwindcss(),
 			{
+				// vite-plugin-svelte serves a component's compiled CSS out of module
+				// metadata that only exists once the component itself has been
+				// transformed. When the CSS module is requested first - an HMR or
+				// reconnect re-fetch right after the dev server restarts, for example -
+				// that metadata is missing, its `load` declines, Vite falls back to
+				// serving the raw .svelte file for the id, and @tailwindcss/vite then
+				// dies parsing it: "Invalid declaration: `<script lang="ts"> ...`".
+				// Transform the component up front so the real CSS is served instead.
+				name: "serve-svelte-compiled-css",
+				enforce: "pre",
+				async load(id) {
+					// Dev only: `transformRequest` lives on the dev environment.
+					const transformRequest = this.environment?.transformRequest;
+					if (typeof transformRequest !== "function") {
+						return null;
+					}
+					if (!/[?&]svelte&type=style&lang\.css/.test(id)) {
+						return null;
+					}
+					const filename = id.split("?")[0];
+					if (this.getModuleInfo(filename)?.meta?.svelte?.css) {
+						return null;
+					}
+					try {
+						await transformRequest.call(this.environment, filename);
+					} catch {
+						// Let vite-plugin-svelte report the miss itself.
+					}
+					return null;
+				},
+			},
+			{
 				name: "optimize-deps",
 				configEnvironment(name) {
 					if (name === "client") {
