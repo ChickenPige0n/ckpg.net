@@ -48,7 +48,10 @@ const missing = [];
 const draftWarnings = [];
 
 for (const file of posts) {
-	const rel = path.relative(POSTS_DIR, file);
+	// Normalize to posix separators: path.relative yields "en\\..." on Windows,
+	// which never matched the "en/" prefix check below and made every en post
+	// look like it was missing its own sibling.
+	const rel = path.relative(POSTS_DIR, file).split(path.sep).join("/");
 	const isEn = rel.startsWith("en/");
 	const zhRel = isEn ? rel.slice("en/".length) : rel;
 	const enRel = isEn ? rel : `en/${rel}`;
