@@ -6,24 +6,25 @@ import { definePlugin, type ExpressiveCodePlugin } from "@expressive-code/core";
 export function pluginLanguageBadge(): ExpressiveCodePlugin {
 	return definePlugin({
 		name: "Language Badge",
-		// @ts-expect-error
-		baseStyles: ({ _cssVar }) => `
+		baseStyles: () => `
       [data-language]::before {
         position: absolute;
         z-index: 2;
-        right: 0.5rem;
-        top: 0.5rem;
-        padding: 0.1rem 0.5rem;
+        right: 0.6rem;
+        top: 0.55rem;
+        padding: 0.1rem 0.45rem;
         content: attr(data-language);
         font-family: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 0.75rem;
-        font-weight: bold;
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: oklch(0.75 0.1 var(--hue));
-        background: oklch(0.33 0.035 var(--hue));
-        border-radius: 0.5rem;
+        color: rgba(255, 255, 255, 0.55);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0;
         pointer-events: none;
-        transition: opacity 0.3s;
+        transition: opacity 0.2s;
         opacity: 0;
       }
       .frame:not(.has-title):not(.is-terminal) {

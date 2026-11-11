@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import { siteConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { getTranslation } from "../i18n/translation";
@@ -29,58 +28,38 @@ const className = Astro.props.class;
 const t = getTranslation(lang || siteConfig.lang);
 ---
 
-<div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
+<div class:list={["flex flex-wrap items-center gap-x-5 gap-y-2 text-xs swiss-num text-(--ink-muted)", className]}>
     <!-- publish date -->
-    <div class="flex items-center">
-        <div class="meta-icon"
-        >
-            <Icon name="material-symbols:calendar-today-outline-rounded" class="text-xl"></Icon>
-        </div>
-        <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(published)}</span>
+    <div class="flex items-center gap-1.5">
+        <span class="text-(--ink-faint) uppercase tracking-wider">PUB</span>
+        <time datetime={published.toISOString()} class="text-(--ink-body)">{formatDateToYYYYMMDD(published)}</time>
     </div>
 
     <!-- update date -->
     {!hideUpdateDate && updated && updated.getTime() !== published.getTime() && (
-        <div class="flex items-center">
-            <div class="meta-icon"
-            >
-                <Icon name="material-symbols:edit-calendar-outline-rounded" class="text-xl"></Icon>
-            </div>
-            <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(updated)}</span>
+        <div class="flex items-center gap-1.5">
+            <span class="text-(--ink-faint) uppercase tracking-wider">UPD</span>
+            <time datetime={updated.toISOString()} class="text-(--ink-body)">{formatDateToYYYYMMDD(updated)}</time>
         </div>
     )}
 
     <!-- categories -->
-    <div class="flex items-center">
-        <div class="meta-icon"
-        >
-            <Icon name="material-symbols:book-2-outline-rounded" class="text-xl"></Icon>
-        </div>
-        <div class="flex flex-row flex-nowrap items-center">
-            <a href={getCategoryUrl(category, lang || siteConfig.lang)} aria-label={`View all posts in the ${category} category`}
-               class="link-lg transition text-50 text-sm font-medium
-                            hover:text-(--primary) dark:hover:text-(--primary) whitespace-nowrap">
-                {category ? category : <span data-i18n="uncategorized">{t[I18nKey.uncategorized]}</span>}
-            </a>
-        </div>
+    <div class="flex items-center gap-1.5">
+        <span class="text-(--ink-faint) uppercase tracking-wider">CAT</span>
+        <a href={getCategoryUrl(category, lang || siteConfig.lang)} aria-label={`View all posts in the ${category} category`}
+           class="text-(--ink-body) hover:text-(--primary) transition-colors whitespace-nowrap">
+            {category ? category : <span data-i18n="uncategorized">{t[I18nKey.uncategorized]}</span>}
+        </a>
     </div>
 
     <!-- tags -->
-    <div class:list={["items-center", {"flex": !hideTagsForMobile, "hidden md:flex": hideTagsForMobile}]}>
-        <div class="meta-icon"
-        >
-            <Icon name="material-symbols:tag-rounded" class="text-xl"></Icon>
-        </div>
-        <div class="flex flex-row flex-nowrap items-center">
-            {(tags && tags.length > 0) && tags.map((tag, i) => (
-                <div class:list={[{"hidden": i == 0}, "mx-1.5 text-(--meta-divider) text-sm"]}>/</div>
-                <a href={getTagUrl(tag, lang || siteConfig.lang)} aria-label={`View all posts with the ${tag.trim()} tag`}
-                   class="link-lg transition text-50 text-sm font-medium
-                                hover:text-(--primary) dark:hover:text-(--primary) whitespace-nowrap">
-                    {tag.trim()}
-                </a>
-            ))}
-            {!(tags && tags.length > 0) && <div class="transition text-50 text-sm font-medium" data-i18n="noTags">{t[I18nKey.noTags]}</div>}
-        </div>
+    <div class:list={["items-center gap-2", {"flex": !hideTagsForMobile, "hidden md:flex": hideTagsForMobile}]}>
+        {(tags && tags.length > 0) && tags.map((tag) => (
+            <a href={getTagUrl(tag, lang || siteConfig.lang)} aria-label={`View all posts with the ${tag.trim()} tag`}
+               class="text-(--ink-muted) hover:text-(--primary) transition-colors whitespace-nowrap">
+                #{tag.trim()}
+            </a>
+        ))}
+        {!(tags && tags.length > 0) && <span class="text-(--ink-faint)" data-i18n="noTags">{t[I18nKey.noTags]}</span>}
     </div>
 </div>

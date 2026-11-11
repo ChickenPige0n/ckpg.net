@@ -1,0 +1,346 @@
+---
+import { render } from "astro:content";
+import { Icon } from "astro-icon/components";
+import { profileConfig, siteConfig } from "../config";
+import I18nKey from "../i18n/i18nKey";
+import { getTranslation, isEnglishLang } from "../i18n/translation";
+import {
+	getCategoryList,
+	getSortedPosts,
+	getTagList,
+} from "../utils/content-utils";
+import { formatDateToYYYYMMDD } from "../utils/date-utils";
+import {
+	getAboutUrl,
+	getArchiveUrl,
+	getBlogUrl,
+	getPostUrlBySlug,
+	getTagUrl,
+} from "../utils/url-utils";
+
+interface Props {
+	lang?: string;
+}
+
+const lang = Astro.props.lang || siteConfig.lang;
+const english = isEnglishLang(lang);
+const t = getTranslation(lang);
+
+const allPosts = await getSortedPosts(lang);
+const recentPosts = allPosts.slice(0, 5);
+const categories = await getCategoryList(lang);
+const tags = await getTagList(lang);
+
+const enrichedRecent = await Promise.all(
+	recentPosts.map(async (entry) => {
+		const { remarkPluginFrontmatter } = await render(entry);
+		return {
+			entry,
+			words: remarkPluginFrontmatter.words as number,
+			minutes: remarkPluginFrontmatter.minutes as number,
+			excerpt: remarkPluginFrontmatter.excerpt as string,
+		};
+	}),
+);
+
+const copy = english
+	? {
+			docIndex: "DOC. 01 — PERSONAL EDITION",
+			coordinates: "22.78° N, 113.94° E · SHENZHEN",
+			roleTag: "DEVELOPER & UNDERGRADUATE",
+			namePrimary: "Taoyuan Ye",
+			nameSecondary: "ChickenPige0n · 叶涛源",
+			lead: "Software developer and undergraduate student at Shenzhen University of Advanced Technology (SUAT). Writing about systems tooling, TypeScript, document engineering, and the mechanics of intelligence.",
+			ctaPrimary: "Read Articles",
+			ctaSecondary: "Full Archive",
+			ctaAbout: "Biography",
+			secProfile: "01 / PROFILE & FOCUS",
+			focusItems: [
+				{
+					code: "A.01",
+					title: "Systems & Developer Tooling",
+					desc: "Command-line utilities, lightweight servers, static compilation pipelines, and reproducible workflows.",
+				},
+				{
+					code: "A.02",
+					title: "Type Systems & Web Architecture",
+					desc: "TypeScript type-level mechanics, edge-deployed web applications, and minimal interface engineering.",
+				},
+				{
+					code: "A.03",
+					title: "Typesetting & Essays",
+					desc: "Algorithmic document layout with Typst, mathematical notation, and notes on machine cognition.",
+				},
+			],
+			secSelected: "02 / SELECTED WRITING",
+			viewAll: "All entries",
+			secIndex: "03 / TAXONOMY & CHANNELS",
+			institutionLabel: "INSTITUTION",
+			institutionValue: "Shenzhen University of Advanced Technology",
+			contactLabel: "DIRECT CHANNELS",
+			statsPosts: "PUBLISHED ESSAYS",
+			statsCategories: "CATEGORIES",
+			statsTags: "INDEXED TAGS",
+		}
+	: {
+			docIndex: "DOC. 01 — 个人志与技术札记",
+			coordinates: "22.78° N, 113.94° E · 深圳",
+			roleTag: "开发者 · 本科在读",
+			namePrimary: "叶涛源",
+			nameSecondary: "ChickenPige0n · Taoyuan Ye",
+			lead: "开发者，目前就读于深圳理工大学（SUAT）。在这里记录系统工具、TypeScript 类型体操、Typst 排版工程，以及关于机器智能与日常技术实践的思考。",
+			ctaPrimary: "阅读文章",
+			ctaSecondary: "全部归档",
+			ctaAbout: "关于作者",
+			secProfile: "01 / 方向与关注",
+			focusItems: [
+				{
+					code: "A.01",
+					title: "系统与开发者工具",
+					desc: "命令行工具链、轻量级文件与网络服务、静态构建流水线与高可靠性的日常开发环境。",
+				},
+				{
+					code: "A.02",
+					title: "类型系统与现代 Web",
+					desc: "TypeScript 类型推导机制、边缘计算运行时（Cloudflare Workers）与克制的界面工程。",
+				},
+				{
+					code: "A.03",
+					title: "数字排版与随笔",
+					desc: "基于 Typst 的程序化文档排版、数学公式渲染，以及对人工智能形态的观察与札记。",
+				},
+			],
+			secSelected: "02 / 近期文章",
+			viewAll: "查看全部",
+			secIndex: "03 / 索引与联络",
+			institutionLabel: "就读院校",
+			institutionValue: "深圳理工大学 (SUAT)",
+			contactLabel: "联络渠道",
+			statsPosts: "已发布文章",
+			statsCategories: "内容分类",
+			statsTags: "索引标签",
+		};
+---
+
+<div class="pb-8">
+	<!-- Top Swiss Metadata Bar -->
+	<div class="flex flex-wrap items-center justify-between gap-y-2 pb-4 border-b border-(--ink-strong) swiss-rule-animate">
+		<div class="flex items-center gap-2.5">
+			<span class="inline-block w-2 h-2 bg-(--primary)"></span>
+			<span class="swiss-label text-(--ink-strong)">{copy.docIndex}</span>
+		</div>
+		<div class="swiss-label">{copy.coordinates}</div>
+	</div>
+
+	<!-- Hero Section: Asymmetric Swiss Poster Grid -->
+	<section class="py-10 md:py-16 lg:py-20 border-b border-(--line-divider)">
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8 items-end">
+			<div class="lg:col-span-8">
+				<div class="swiss-label mb-4 onload-animation" style="animation-delay: 40ms;">
+					{copy.roleTag}
+				</div>
+				<h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[5.25rem] font-bold tracking-[-0.04em] leading-[0.96] text-(--ink-strong) mb-4">
+					<span class="swiss-mask-line">
+						<span style="animation-delay: 80ms;">{copy.namePrimary}</span>
+					</span>
+				</h1>
+				<p class="swiss-num text-sm md:text-base text-(--ink-muted) tracking-tight onload-animation" style="animation-delay: 160ms;">
+					{copy.nameSecondary}
+				</p>
+			</div>
+
+			<div class="lg:col-span-4 flex flex-row lg:flex-col justify-between lg:items-end gap-6 pt-4 lg:pt-0 border-t lg:border-t-0 border-(--line-divider) onload-animation" style="animation-delay: 200ms;">
+				<div class="text-left lg:text-right">
+					<div class="swiss-num text-3xl md:text-4xl font-semibold text-(--ink-strong) leading-none">
+						{String(allPosts.length).padStart(2, "0")}
+					</div>
+					<div class="swiss-label mt-1.5">{copy.statsPosts}</div>
+				</div>
+				<div class="flex gap-8 lg:gap-6 text-left lg:text-right">
+					<div>
+						<div class="swiss-num text-xl font-medium text-(--ink-strong) leading-none">
+							{String(categories.length).padStart(2, "0")}
+						</div>
+						<div class="swiss-label mt-1">{copy.statsCategories}</div>
+					</div>
+					<div>
+						<div class="swiss-num text-xl font-medium text-(--ink-strong) leading-none">
+							{String(tags.length).padStart(2, "0")}
+						</div>
+						<div class="swiss-label mt-1">{copy.statsTags}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8 mt-10 md:mt-14 items-end onload-animation" style="animation-delay: 240ms;">
+			<div class="lg:col-span-7">
+				<p class="text-base md:text-lg leading-relaxed text-(--ink-body) max-w-2xl">
+					{copy.lead}
+				</p>
+			</div>
+			<div class="lg:col-span-5 flex flex-wrap items-center lg:justify-end gap-3">
+				<a
+					href={getBlogUrl(lang)}
+					class="group inline-flex items-center gap-2.5 h-11 px-5 bg-(--ink-strong) text-(--page-bg) text-sm font-medium tracking-tight transition-colors duration-200 hover:bg-(--primary) hover:text-white"
+				>
+					<span>{copy.ctaPrimary}</span>
+					<Icon name="material-symbols:arrow-forward-rounded" class="text-base transition-transform duration-200 group-hover:translate-x-1" />
+				</a>
+				<a
+					href={getArchiveUrl(lang)}
+					class="inline-flex items-center gap-2 h-11 px-5 border border-(--line-color) hover:border-(--ink-strong) text-(--ink-strong) text-sm font-medium transition-colors duration-200"
+				>
+					<span>{copy.ctaSecondary}</span>
+				</a>
+				<a
+					href={getAboutUrl(lang)}
+					class="inline-flex items-center h-11 px-3 text-sm text-(--ink-muted) hover:text-(--ink-strong) swiss-link-sweep transition-colors duration-200"
+				>
+					{copy.ctaAbout}
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- Section 01: Focus & Disciplines -->
+	<section class="py-12 md:py-16 border-b border-(--line-divider)" data-swiss-reveal>
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8">
+			<div class="lg:col-span-4">
+				<h2 class="swiss-label text-(--ink-strong)">{copy.secProfile}</h2>
+			</div>
+			<div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+				{copy.focusItems.map((item) => (
+					<div class="border-t border-(--line-color) pt-4">
+						<div class="swiss-num text-xs text-(--primary) font-medium mb-2">{item.code}</div>
+						<h3 class="text-base font-semibold text-(--ink-strong) tracking-tight mb-2">
+							{item.title}
+						</h3>
+						<p class="text-sm leading-relaxed text-(--ink-muted)">
+							{item.desc}
+						</p>
+					</div>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<!-- Section 02: Selected / Recent Writing -->
+	<section class="py-12 md:py-16 border-b border-(--line-divider)" data-swiss-reveal>
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8">
+			<div class="lg:col-span-4 flex flex-row lg:flex-col justify-between items-baseline lg:items-start">
+				<h2 class="swiss-label text-(--ink-strong)">{copy.secSelected}</h2>
+				<a
+					href={getBlogUrl(lang)}
+					class="group inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-(--ink-muted) hover:text-(--primary) transition-colors lg:mt-6"
+				>
+					<span>{copy.viewAll}</span>
+					<Icon name="material-symbols:arrow-outward-rounded" class="text-sm transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+				</a>
+			</div>
+
+			<div class="lg:col-span-8 divide-y divide-(--line-divider) border-t border-b border-(--line-divider)">
+				{enrichedRecent.map(({ entry, minutes, excerpt }, idx) => (
+					<a
+						href={getPostUrlBySlug(entry.id)}
+						class="group grid grid-cols-1 sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] gap-y-1.5 sm:gap-x-6 py-5 items-baseline transition-colors duration-200 hover:bg-(--btn-card-bg-hover) px-2 -mx-2"
+					>
+						<div class="flex items-center gap-3 swiss-num text-xs text-(--ink-muted)">
+							<span class="text-(--ink-faint)">{String(idx + 1).padStart(2, "0")}</span>
+							<time datetime={entry.data.published.toISOString()}>
+								{formatDateToYYYYMMDD(entry.data.published)}
+							</time>
+						</div>
+
+						<div class="min-w-0">
+							<h3 class="text-lg font-semibold tracking-tight text-(--ink-strong) group-hover:text-(--primary) transition-colors duration-200">
+								{entry.data.title}
+							</h3>
+							<p class="text-sm text-(--ink-muted) line-clamp-1 mt-1">
+								{entry.data.description || excerpt}
+							</p>
+						</div>
+
+						<div class="hidden sm:flex items-center gap-3 swiss-num text-xs text-(--ink-muted) shrink-0">
+							{entry.data.category && (
+								<span class="uppercase tracking-wider">{entry.data.category}</span>
+							)}
+							<span class="text-(--ink-faint)">·</span>
+							<span>
+								{minutes} {t[minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount]}
+							</span>
+							<Icon
+								name="material-symbols:arrow-forward-rounded"
+								class="text-base text-(--ink-faint) group-hover:text-(--primary) transition-transform duration-200 group-hover:translate-x-1"
+							/>
+						</div>
+					</a>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<!-- Section 03: Taxonomy & Direct Channels -->
+	<section class="pt-12 md:pt-16" data-swiss-reveal>
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8">
+			<div class="lg:col-span-4">
+				<h2 class="swiss-label text-(--ink-strong)">{copy.secIndex}</h2>
+				<div class="mt-6">
+					<div class="swiss-label mb-1">{copy.institutionLabel}</div>
+					<div class="text-sm text-(--ink-body)">{copy.institutionValue}</div>
+				</div>
+			</div>
+
+			<div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+				<div class="border-t border-(--line-color) pt-4">
+					<div class="swiss-label mb-3">{t[I18nKey.tags]}</div>
+					<div class="flex flex-wrap gap-x-4 gap-y-2">
+						{tags.map((tag) => (
+							<a
+								href={getTagUrl(tag.name, lang)}
+								class="group inline-flex items-baseline gap-1 text-sm text-(--ink-body) hover:text-(--primary) transition-colors"
+							>
+								<span>#{tag.name.trim()}</span>
+								<sup class="swiss-num text-[0.68rem] text-(--ink-faint) group-hover:text-(--primary)">{tag.count}</sup>
+							</a>
+						))}
+					</div>
+				</div>
+
+				<div class="border-t border-(--line-color) pt-4">
+					<div class="swiss-label mb-3">{copy.contactLabel}</div>
+					<ul class="divide-y divide-(--line-divider)">
+						{profileConfig.links.map((item) => (
+							<li>
+								<a
+									rel="me"
+									href={item.url}
+									target="_blank"
+									class="group flex items-center justify-between py-2.5 text-sm text-(--ink-strong) hover:text-(--primary) transition-colors"
+								>
+									<span class="flex items-center gap-2.5">
+										<Icon name={item.icon} class="text-base text-(--ink-muted) group-hover:text-(--primary) transition-colors" />
+										<span class="font-medium">{item.name}</span>
+									</span>
+									<Icon name="material-symbols:arrow-outward-rounded" class="text-sm text-(--ink-faint) group-hover:text-(--primary) transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+								</a>
+							</li>
+						))}
+						<li>
+							<a
+								href="mailto:me@ckpg.net"
+								class="group flex items-center justify-between py-2.5 text-sm text-(--ink-strong) hover:text-(--primary) transition-colors"
+							>
+								<span class="flex items-center gap-2.5">
+									<Icon name="material-symbols:mail-outline-rounded" class="text-base text-(--ink-muted) group-hover:text-(--primary) transition-colors" />
+									<span class="font-medium swiss-num">me@ckpg.net</span>
+								</span>
+								<Icon name="material-symbols:arrow-outward-rounded" class="text-sm text-(--ink-faint) group-hover:text-(--primary) transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>

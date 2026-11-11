@@ -1,8 +1,10 @@
 ---
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+import "../styles/variables.styl";
+import "../styles/markdown-extend.styl";
 import "../styles/main.css";
+import "../styles/markdown.css";
 
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import { profileConfig, siteConfig } from "@/config";
@@ -555,11 +557,30 @@ function showBanner() {
 	banner.classList.remove('opacity-0', 'scale-105');
 }
 
+function initSwissReveal() {
+	const elements = document.querySelectorAll<HTMLElement>('[data-swiss-reveal]:not(.is-visible)');
+	if (!elements.length) return;
+	const observer = new IntersectionObserver((entries, obs) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				entry.target.classList.add('is-visible');
+				obs.unobserve(entry.target);
+			}
+		});
+	}, {
+		root: null,
+		rootMargin: '0px 0px -40px 0px',
+		threshold: 0.08,
+	});
+	elements.forEach((el) => observer.observe(el));
+}
+
 function init() {
 	// disableAnimation()()		// TODO
 	loadTheme();
 	loadHue();
 	initCustomScrollbar();
+	initSwissReveal();
 	showBanner();
 }
 
@@ -567,18 +588,6 @@ function init() {
 init();
 
 const setup = () => {
-	// TODO: temp solution to change the height of the banner
-/*
-	window.swup.hooks.on('animation:out:start', () => {
-		const path = window.location.pathname
-		const body = document.querySelector('body')
-		if (path[path.length - 1] === '/' && !body.classList.contains('is-home')) {
-			body.classList.add('is-home')
-		} else if (path[path.length - 1] !== '/' && body.classList.contains('is-home')) {
-			body.classList.remove('is-home')
-		}
-	})
-*/
 	window.swup.hooks.on('link:click', () => {
 		// Remove the delay for the first time page load
 		document.documentElement.style.setProperty('--content-delay', '0ms')
@@ -596,7 +605,10 @@ const setup = () => {
 			navbar.classList.add('navbar-hidden')
 		}
 	})
-	window.swup.hooks.on('content:replace', initCustomScrollbar)
+	window.swup.hooks.on('content:replace', () => {
+		initCustomScrollbar();
+		initSwissReveal();
+	})
 	window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
 		// change banner height immediately when a link is clicked
 		const bodyElement = document.querySelector('body')
@@ -624,6 +636,22 @@ const setup = () => {
 		if (heightExtend) {
 			heightExtend.classList.remove('hidden')
 		}
+		// Keep <html data-lang-switch-href> and <html data-page-lang> in sync after client navigation
+		const pathname = window.location.pathname;
+		const isEnPath = pathname.startsWith('/en/') || pathname.startsWith('/posts/en/');
+		const nextLang = isEnPath ? 'en' : siteConfig.lang;
+		document.documentElement.setAttribute('data-page-lang', nextLang);
+		document.documentElement.setAttribute('lang', nextLang.replace('_', '-'));
+		let nextSwitch = '';
+		if (pathname.startsWith('/posts/')) {
+			const langSwitchLink = document.querySelector<HTMLAnchorElement>('a[data-lang-switch]');
+			nextSwitch = langSwitchLink?.getAttribute('href') || '';
+		} else if (isEnPath) {
+			nextSwitch = pathname.replace(/^\/en\//, '/');
+		} else {
+			nextSwitch = `/en/${pathname.replace(/^\//, '')}`;
+		}
+		document.documentElement.setAttribute('data-lang-switch-href', nextSwitch);
 	});
 	window.swup.hooks.on('visit:end', (_visit: {to: {url: string}}) => {
 		setTimeout(() => {

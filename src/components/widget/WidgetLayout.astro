@@ -19,17 +19,16 @@ const { id, name, i18nKey, isCollapsed, collapsedHeight, style, lang } =
 const t = getTranslation(lang || siteConfig.lang);
 const className = Astro.props.class;
 ---
-<widget-layout data-id={id} data-is-collapsed={String(isCollapsed)} class={"pb-4 card-base " + className} style={style}>
-    <div class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 relative ml-8 mt-4 mb-2
-        before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-        before:absolute before:left-[-16px] before:top-[5.5px]" data-i18n={i18nKey}>{name}</div>
-    <div id={id} class:list={["collapse-wrapper px-4 overflow-hidden", {"collapsed": isCollapsed}]}>
+<widget-layout data-id={id} data-is-collapsed={String(isCollapsed)} class:list={["block pb-2", className]} style={style}>
+    <div class="swiss-label text-(--ink-strong) mb-3 pb-2 border-b border-(--line-divider)" data-i18n={i18nKey}>{name}</div>
+    <div id={id} class:list={["collapse-wrapper overflow-hidden", {"collapsed": isCollapsed}]}>
         <slot></slot>
     </div>
-    {isCollapsed && <div class="expand-btn px-4 -mb-2">
-        <button class="btn-plain rounded-lg w-full h-9">
-            <div class="text-(--primary) flex items-center justify-center gap-2 -translate-x-2">
-                <Icon name="material-symbols:more-horiz" class="text-[1.75rem]"></Icon> <span data-i18n={I18nKey.more}>{t[I18nKey.more]}</span>
+    {isCollapsed && <div class="expand-btn mt-2">
+        <button class="btn-plain w-full h-8 text-xs font-mono uppercase tracking-wider justify-start!">
+            <div class="text-(--primary) flex items-center gap-1.5">
+                <Icon name="material-symbols:add" class="text-[1rem]"></Icon>
+                <span data-i18n={I18nKey.more}>{t[I18nKey.more]}</span>
             </div>
         </button>
     </div>}

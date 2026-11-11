@@ -9,8 +9,6 @@ import type { SearchResult } from "@/global";
 
 export let lang: string = siteConfig.lang;
 const t = getTranslation(lang);
-// Search results follow the content language of the page the visitor is on,
-// so a search from /en/ pages never surfaces zh-only posts (and vice versa).
 const english = lang.toLowerCase().startsWith("en");
 
 let keywordDesktop = "";
@@ -34,7 +32,7 @@ const fakeResult: SearchResult[] = [
 		meta: {
 			title: "If You Want to Test the Search",
 		},
-		excerpt: "Try running <mark>npm build && npm preview</mark> instead.",
+		excerpt: "Try running <mark>pnpm build && pnpm preview</mark> instead.",
 	},
 ];
 
@@ -102,35 +100,25 @@ onMount(() => {
 			typeof window !== "undefined" &&
 			!!window.pagefind &&
 			typeof window.pagefind.search === "function";
-		console.log("Pagefind status on init:", pagefindLoaded);
 		if (keywordDesktop) search(keywordDesktop, true);
 		if (keywordMobile) search(keywordMobile, false);
 	};
 
 	if (import.meta.env.DEV) {
-		console.log(
-			"Pagefind is not available in development mode. Using mock data.",
-		);
 		initializeSearch();
 	} else {
 		document.addEventListener("pagefindready", () => {
-			console.log("Pagefind ready event received.");
 			initializeSearch();
 		});
 		document.addEventListener("pagefindloaderror", () => {
-			console.warn(
-				"Pagefind load error event received. Search functionality will be limited.",
-			);
-			initializeSearch(); // Initialize with pagefindLoaded as false
+			initializeSearch();
 		});
 
-		// Fallback in case events are not caught or pagefind is already loaded by the time this script runs
 		setTimeout(() => {
 			if (!initialized) {
-				console.log("Fallback: Initializing search after timeout.");
 				initializeSearch();
 			}
-		}, 2000); // Adjust timeout as needed
+		}, 2000);
 	}
 });
 
@@ -150,22 +138,19 @@ $: if (initialized && keywordMobile) {
 <!-- search bar for desktop view -->
 <div
   id="search-bar"
-  class="hidden lg:flex transition-all items-center h-11 mr-2 rounded-lg
-      bg-black/4 hover:bg-black/6 focus-within:bg-black/6
-      dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
-"
+  class="hidden lg:flex transition-all duration-200 items-center h-9 mr-1.5 border border-(--line-divider) focus-within:border-(--ink-strong) bg-transparent"
 >
   <Icon
     icon="material-symbols:search"
-    class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"
+    class="absolute text-[1.05rem] pointer-events-none ml-2.5 text-(--ink-muted)"
   ></Icon>
   <input
     placeholder={t[I18nKey.search]}
     data-i18n-placeholder="search"
     bind:value={keywordDesktop}
     on:focus={() => search(keywordDesktop, true)}
-    class="transition-all pl-10 text-sm bg-transparent outline-0
-         h-full w-40 active:w-60 focus:w-60 text-black/50 dark:text-white/50"
+    class="transition-all duration-200 pl-8 pr-2.5 text-xs bg-transparent outline-0
+         h-full w-32 focus:w-52 text-(--ink-strong) placeholder:text-(--ink-faint)"
   />
 </div>
 
@@ -174,58 +159,56 @@ $: if (initialized && keywordMobile) {
   on:click={togglePanel}
   aria-label="Search Panel"
   id="search-switch"
-  class="btn-plain scale-animation lg:hidden! rounded-lg w-11 h-11 active:scale-90"
+  class="btn-plain scale-animation lg:hidden! w-9 h-9"
 >
-  <Icon icon="material-symbols:search" class="text-[1.25rem]"></Icon>
+  <Icon icon="material-symbols:search" class="text-[1.15rem]"></Icon>
 </button>
 
 <!-- search panel -->
 <div
   id="search-panel"
-  class="float-panel float-panel-closed search-panel absolute md:w-[30rem]
-top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2"
+  class="float-panel float-panel-closed search-panel absolute md:w-[28rem]
+top-16 left-0 md:left-[unset] right-0 p-2 z-50"
 >
   <!-- search bar inside panel for phone/tablet -->
   <div
     id="search-bar-inside"
-    class="flex relative lg:hidden transition-all items-center h-11 rounded-xl
-      bg-black/4 hover:bg-black/6 focus-within:bg-black/6
-      dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
-  "
+    class="flex relative lg:hidden transition-all items-center h-9 border border-(--line-divider) focus-within:border-(--ink-strong) mb-1"
   >
     <Icon
       icon="material-symbols:search"
-      class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"
+      class="absolute text-[1.05rem] pointer-events-none ml-2.5 text-(--ink-muted)"
     ></Icon>
     <input
       placeholder={t[I18nKey.search]}
       data-i18n-placeholder="search"
       bind:value={keywordMobile}
-      class="pl-10 absolute inset-0 text-sm bg-transparent outline-0
-               focus:w-60 text-black/50 dark:text-white/50"
+      class="pl-8 pr-3 absolute inset-0 text-xs bg-transparent outline-0 text-(--ink-strong) placeholder:text-(--ink-faint)"
     />
   </div>
 
   <!-- search results -->
-  {#each result as item}
-    <a
-      href={item.url}
-      class="transition first-of-type:mt-2 lg:first-of-type:mt-0 group block
-       rounded-xl text-lg px-3 py-2 hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active)"
-    >
-      <div
-        class="transition text-90 inline-flex font-bold group-hover:text-(--primary)"
+  <div class="divide-y divide-(--line-divider)">
+    {#each result as item}
+      <a
+        href={item.url}
+        class="transition-colors group block px-3 py-2.5 hover:bg-(--btn-plain-bg-hover)"
       >
-        {item.meta.title}<Icon
-          icon="fa6-solid:chevron-right"
-          class="transition text-[0.75rem] translate-x-1 my-auto text-(--primary)"
-        ></Icon>
-      </div>
-      <div class="transition text-sm text-50">
-        {@html item.excerpt}
-      </div>
-    </a>
-  {/each}
+        <div
+          class="text-sm font-semibold text-(--ink-strong) inline-flex items-center gap-1.5 group-hover:text-(--primary) transition-colors"
+        >
+          <span>{item.meta.title}</span>
+          <Icon
+            icon="material-symbols:arrow-forward-rounded"
+            class="text-[0.875rem] text-(--ink-faint) group-hover:text-(--primary) transition-transform group-hover:translate-x-0.5"
+          ></Icon>
+        </div>
+        <div class="text-xs text-(--ink-muted) mt-0.5 leading-relaxed">
+          {@html item.excerpt}
+        </div>
+      </a>
+    {/each}
+  </div>
 </div>
 
 <style>

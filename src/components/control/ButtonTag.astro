@@ -7,7 +7,7 @@ interface Props {
 }
 const { dot, href, label }: Props = Astro.props;
 ---
-<a href={href} aria-label={label} class="btn-regular h-8 text-sm px-3 rounded-lg">
-    {dot && <div class="h-1 w-1 bg-[var(--btn-content)] dark:bg-[var(--card-bg)] transition rounded-md mr-2"></div>}
-    <slot></slot>
+<a href={href} aria-label={label} class="inline-flex items-center h-7 px-2 text-xs font-mono border border-(--line-divider) hover:border-(--ink-strong) text-(--ink-body) hover:text-(--primary) transition-colors duration-200">
+    {dot && <span class="h-1 w-1 bg-(--primary) mr-1.5"></span>}
+    <span>#</span><slot></slot>
 </a>

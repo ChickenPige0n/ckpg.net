@@ -43,7 +43,7 @@ export default defineConfig({
 			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
 			// the default value `transition-` cause transition delay
 			// when the Tailwind class `transition-all` is used
-			containers: ["main", "#toc"],
+			containers: ["main", "#toc", "#sidebar-col"],
 			smoothScrolling: true,
 			cache: true,
 			preload: true,
@@ -54,7 +54,7 @@ export default defineConfig({
 		}),
 		icon({
 			include: {
-				"preprocess: vitePreprocess(),": ["*"],
+				"material-symbols": ["*"],
 				"fa6-brands": ["*"],
 				"fa6-regular": ["*"],
 				"fa6-solid": ["*"],
@@ -78,8 +78,9 @@ export default defineConfig({
 			},
 			styleOverrides: {
 				codeBackground: "var(--codeblock-bg)",
-				borderRadius: "0.75rem",
-				borderColor: "none",
+				borderRadius: "0",
+				borderColor: "var(--line-color)",
+				borderWidth: "1px",
 				codeFontSize: "0.875rem",
 				codeFontFamily:
 					"'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
@@ -110,76 +111,82 @@ export default defineConfig({
 		mdx(),
 		typst({
 			options: {
-				remPx: 14,
+				remPx: 24,
+				cheerio: {
+					postprocess: ($) => {
+						const $svg = $("svg.typst-doc");
+						const w = $svg.attr("width");
+						$svg.removeAttr("height");
+						if (w) {
+							const existingStyle = $svg.attr("style") || "";
+							$svg.attr(
+								"style",
+								`${existingStyle} width: min(100%, ${w}); height: auto; display: block;`.trim(),
+							);
+						}
+						return $;
+					},
+				},
 			},
 			target: (id) => {
-				console.debug(`Detecting ${id}`);
 				if (id.endsWith(".html.typ") || id.includes("/html/")) return "html";
 				return "svg";
 			},
-			// === Use html-text output rather than hAST ===
-			htmlMode: "text", // added in v0.12.3
-			// === <img src="xxx.svg"> instead of inlined <svg> ===
-			// emitSvg: true,
-			// emitSvgDir: ".astro/typst"
-			// === Add non-system fonts here ===
-			// fontArgs: [
-			//   { fontPaths: ['/system/fonts', '/user/fonts'] },
-			//   { fontBlobs: [customFontBuffer] }
-			// ],
+			htmlMode: "text",
 		}),
 	],
 	markdown: {
-		processor: unified(),
-		remarkPlugins: [
-			remarkMath,
-			remarkReadingTime,
-			remarkExcerpt,
-			remarkGithubAdmonitionsToDirectives,
-			remarkDirective,
-			remarkSectionize,
-			parseDirectiveNode,
-		],
-		rehypePlugins: [
-			rehypeKatex,
-			rehypeSlug,
-			[
-				rehypeComponents,
-				{
-					components: {
-						github: GithubCardComponent,
-						note: (x, y) => AdmonitionComponent(x, y, "note"),
-						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
-						important: (x, y) => AdmonitionComponent(x, y, "important"),
-						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
-						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
-					},
-				},
+		processor: unified({
+			remarkPlugins: [
+				remarkMath,
+				remarkReadingTime,
+				remarkExcerpt,
+				remarkGithubAdmonitionsToDirectives,
+				remarkDirective,
+				remarkSectionize,
+				parseDirectiveNode,
 			],
-			[
-				rehypeAutolinkHeadings,
-				{
-					behavior: "append",
-					properties: {
-						className: ["anchor"],
-					},
-					content: {
-						type: "element",
-						tagName: "span",
-						properties: {
-							className: ["anchor-icon"],
-							"data-pagefind-ignore": true,
+			rehypePlugins: [
+				rehypeKatex,
+				rehypeSlug,
+				[
+					rehypeComponents,
+					{
+						components: {
+							github: GithubCardComponent,
+							note: (x, y) => AdmonitionComponent(x, y, "note"),
+							tip: (x, y) => AdmonitionComponent(x, y, "tip"),
+							important: (x, y) => AdmonitionComponent(x, y, "important"),
+							caution: (x, y) => AdmonitionComponent(x, y, "caution"),
+							warning: (x, y) => AdmonitionComponent(x, y, "warning"),
 						},
-						children: [
-							{
-								type: "text",
-								value: "#",
-							},
-						],
 					},
-				},
+				],
+				[
+					rehypeAutolinkHeadings,
+					{
+						behavior: "append",
+						properties: {
+							className: ["anchor"],
+						},
+						content: {
+							type: "element",
+							tagName: "span",
+							properties: {
+								className: ["anchor-icon"],
+								"data-pagefind-ignore": true,
+							},
+							children: [
+								{
+									type: "text",
+									value: "#",
+								},
+							],
+						},
+					},
+				],
 			],
-		],
+		}),
 	},
 	vite: {
 		plugins: [

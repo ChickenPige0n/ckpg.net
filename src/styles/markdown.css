@@ -1,9 +1,8 @@
 @reference "./main.css";
 
 .custom-md {
-  h1 {
-    @apply text-3xl;
-  }
+  color: var(--ink-body);
+  line-height: 1.75;
 
   h1,
   h2,
@@ -11,39 +10,50 @@
   h4,
   h5,
   h6 {
+    color: var(--ink-strong);
+    letter-spacing: -0.025em;
+    font-weight: 600;
+
     .anchor {
-      @apply transition! -m-0.5! ml-[0.2ch]! p-0.5! select-none! opacity-0! no-underline!;
+      @apply transition-opacity! -m-0.5! ml-[0.35ch]! p-0.5! select-none! opacity-0! no-underline! text-(--ink-muted)! font-mono! text-[0.75em]!;
 
       .anchor-icon {
-        @apply mx-[0.45ch]!;
+        @apply mx-[0.25ch]!;
       }
     }
 
     &:hover {
       .anchor {
-        @apply opacity-100!;
+        @apply opacity-100! text-(--primary)!;
       }
     }
   }
 
+  h1 {
+    @apply text-3xl mt-10 mb-5;
+  }
+
+  h2 {
+    @apply text-2xl mt-10 mb-4 pt-6 border-t border-(--line-divider);
+  }
+
+  h3 {
+    @apply text-xl mt-8 mb-3;
+  }
+
   a:not(.no-styling) {
-    @apply relative bg-none link font-medium text-(--primary)
-        underline decoration-(--link-underline) decoration-1 decoration-dashed underline-offset-4;
+    @apply relative font-medium text-(--ink-strong) underline decoration-(--link-underline) decoration-1 underline-offset-4 transition-colors duration-200;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
-    display: inline-block;
 
     &:hover,
     &:active {
-      @apply decoration-transparent;
-      background: var(--btn-plain-bg-hover);
-      border-bottom: 1px dashed var(--link-hover);
-      text-decoration: none;
+      @apply text-(--primary) decoration-(--primary);
     }
   }
 
   code {
-    @apply bg-(--inline-code-bg) text-(--inline-code-color) px-1 py-0.5 rounded-md overflow-hidden;
+    @apply bg-(--inline-code-bg) text-(--inline-code-color) px-1.5 py-0.5 text-[0.875em] font-normal;
 
     font-family:
       "JetBrains Mono Variable",
@@ -79,20 +89,20 @@
 
   .copy-btn {
     all: initial;
-    @apply btn-regular-dark opacity-0 shadow-lg shadow-black/50 absolute active:scale-90 h-8 w-8 top-3 right-3 text-sm rounded-lg transition-all ease-in-out z-20 cursor-pointer;
+    @apply btn-regular-dark opacity-0 absolute active:scale-95 h-7 w-7 top-2.5 right-2.5 text-xs transition-all duration-150 z-20 cursor-pointer;
   }
   .frame:hover .copy-btn {
     opacity: 1;
   }
 
   .copy-btn-icon {
-    @apply absolute top-1/2 left-1/2 transition -translate-x-1/2 -translate-y-1/2 w-4 h-4 fill-white pointer-events-none;
+    @apply absolute top-1/2 left-1/2 transition -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 fill-white pointer-events-none;
   }
   .copy-btn .copy-icon {
-    @apply opacity-100 fill-white dark:fill-white/75;
+    @apply opacity-100 fill-white/80;
   }
   .copy-btn.success .copy-icon {
-    @apply opacity-0 fill-(--deep-text);
+    @apply opacity-0 fill-white;
   }
   .copy-btn .success-icon {
     @apply opacity-0 fill-white;
@@ -102,7 +112,7 @@
   }
 
   .expressive-code {
-    @apply my-4;
+    @apply my-6;
     ::selection {
       @apply bg-(--codeblock-selection);
     }
@@ -111,19 +121,14 @@
   ul,
   ol {
     li::marker {
-      @apply text-(--primary);
+      @apply text-(--ink-muted) font-mono text-sm;
     }
   }
 
   blockquote {
-    @apply not-italic border-transparent relative;
+    @apply not-italic border-l-2 border-(--ink-strong) pl-5 py-0.5 my-6 text-(--ink-muted);
     font-weight: inherit;
 
-    &:before {
-      @apply content-[''] absolute -left-1 block transition bg-(--btn-regular-bg) h-full w-1 rounded-full;
-    }
-
-    /* Remove the double quotes from default styles */
     p:before,
     p:after {
       @apply content-none;
@@ -133,6 +138,38 @@
   .katex-display-container {
     max-width: 100%;
     overflow-x: auto;
-    margin: 1em 0;
+    margin: 1.5em 0;
   }
+
+  /* Typst SVG responsive & dark-mode editorial styling */
+  svg.typst-doc {
+    max-width: 100%;
+    height: auto !important;
+    margin: 2rem 0;
+    overflow: visible;
+  }
+
+  svg.typst-doc .tsel,
+  svg.typst-doc .tsel span {
+    position: static;
+  }
+}
+
+.dark .custom-md svg.typst-doc .typst-text[fill="#000"],
+.dark .custom-md svg.typst-doc .typst-text[fill="#000000"] {
+  fill: var(--ink-strong);
+}
+
+.dark .custom-md svg.typst-doc path[fill="#000"],
+.dark .custom-md svg.typst-doc path[fill="#000000"],
+.dark .custom-md svg.typst-doc path[fill="#17191E"],
+.dark .custom-md svg.typst-doc path[fill="#17191e"] {
+  fill: var(--ink-strong);
+}
+
+.dark .custom-md svg.typst-doc path[stroke="#000"],
+.dark .custom-md svg.typst-doc path[stroke="#000000"],
+.dark .custom-md svg.typst-doc line[stroke="#000"],
+.dark .custom-md svg.typst-doc line[stroke="#000000"] {
+  stroke: var(--ink-strong);
 }

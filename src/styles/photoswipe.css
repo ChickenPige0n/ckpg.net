@@ -1,14 +1,14 @@
 @reference "tailwindcss";
 
 .pswp__button {
-  @apply transition! bg-black/40! hover:bg-black/50! active:bg-black/60! flex! items-center! justify-center! mr-0! w-12! h-12!;
+  @apply transition-colors! bg-black/70! hover:bg-black/90! active:bg-black! flex! items-center! justify-center! mr-0! w-11! h-11! border! border-white/15!;
 }
 .pswp__button--zoom,
 .pswp__button--close {
-  @apply mt-4! rounded-xl! active:scale-90!;
+  @apply mt-4! rounded-none! active:scale-95!;
 }
 .pswp__button--zoom {
-  @apply mr-2.5!;
+  @apply mr-2!;
 }
 .pswp__button--close {
   @apply mr-4!;

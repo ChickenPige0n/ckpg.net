@@ -3,86 +3,135 @@
 @plugin "@tailwindcss/typography";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@import "./transition.css";
+@import "./expressive-code.css";
+@import "./scrollbar.css";
+@import "./photoswipe.css";
+
+@layer base {
+  html {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--ink-body);
+  }
+}
+
 @utility link {
-  @apply transition rounded-md p-1 -m-1 expand-animation;
+  @apply transition-colors duration-200 hover:text-(--primary);
 }
 
 @utility link-lg {
-  @apply transition rounded-md p-1.5 -m-1.5 expand-animation;
+  @apply transition-colors duration-200 hover:text-(--primary);
 }
 
 @utility expand-animation {
-  @apply relative before:ease-out before:transition active:bg-none hover:before:bg-(--btn-plain-bg-hover) active:before:bg-(--btn-plain-bg-active) z-0
-      before:absolute before:rounded-[inherit] before:inset-0 before:scale-[0.85] hover:before:scale-100 before:-z-10;
+  @apply relative transition-colors duration-200 hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active);
 }
 
 @layer components {
   .card-base {
-    @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg) transition;
+    @apply bg-(--card-bg) transition-colors duration-200;
   }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  a,
-  span,
-  li,
-  ul,
-  ol,
-  blockquote,
-  code,
-  pre,
-  table,
-  th,
-  td,
-  strong {
-    @apply transition;
-  }
+
   .card-shadow {
-    @apply drop-shadow-[0_2px_4px_rgba(0,0,0,0.005)];
+    @apply shadow-none;
+  }
+
+  .swiss-label {
+    font-family:
+      "JetBrains Mono Variable",
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-muted);
+  }
+
+  .swiss-num {
+    font-family:
+      "JetBrains Mono Variable",
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .swiss-rule {
+    border-top: 1px solid var(--line-divider);
+  }
+
+  .swiss-rule-strong {
+    border-top: 1.5px solid var(--ink-strong);
+  }
+
+  .swiss-link-sweep {
+    position: relative;
+    display: inline-block;
+  }
+
+  .swiss-link-sweep::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .swiss-link-sweep:hover::after,
+  .swiss-link-sweep:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center;
   }
 
   .float-panel {
-    @apply top-21 rounded-(--radius-large) overflow-hidden bg-(--float-panel-bg) transition shadow-xl dark:shadow-none;
+    @apply top-16 overflow-hidden bg-(--float-panel-bg) border border-(--line-color) transition-all duration-200 shadow-[0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)];
   }
   .float-panel-closed {
-    @apply -translate-y-1 opacity-0 pointer-events-none;
+    @apply -translate-y-1.5 opacity-0 pointer-events-none;
   }
   .search-panel mark {
-    @apply bg-transparent text-(--primary);
+    @apply bg-transparent text-(--primary) font-semibold;
   }
 
   .btn-card {
-    @apply transition flex items-center justify-center bg-(--card-bg) hover:bg-(--btn-card-bg-hover)
-        active:bg-(--btn-card-bg-active);
+    @apply transition-colors duration-200 flex items-center justify-center bg-transparent border border-(--line-divider) hover:border-(--ink-strong) hover:bg-(--btn-card-bg-hover) active:bg-(--btn-card-bg-active);
   }
   .btn-card.disabled {
-    @apply pointer-events-none text-black/10 dark:text-white/10;
+    @apply pointer-events-none opacity-25;
   }
   .btn-plain {
-    @apply transition relative flex items-center justify-center bg-none
-        text-black/75 hover:text-(--primary) dark:text-white/75 dark:hover:text-(--primary);
+    @apply transition-colors duration-200 relative flex items-center justify-center bg-transparent text-(--ink-body) hover:text-(--primary);
     &:not(.scale-animation) {
       @apply hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active);
     }
     &.scale-animation {
-      @apply expand-animation;
+      @apply hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active);
       &.current-theme-btn {
-        @apply before:scale-100 before:opacity-100 before:bg-(--btn-plain-bg-hover) text-(--primary);
+        @apply bg-(--btn-plain-bg-hover) text-(--primary);
       }
     }
   }
   .btn-regular {
-    @apply transition flex items-center justify-center bg-(--btn-regular-bg) hover:bg-(--btn-regular-bg-hover) active:bg-(--btn-regular-bg-active)
-        text-(--btn-content) dark:text-white/75;
+    @apply transition-colors duration-200 flex items-center justify-center bg-(--btn-regular-bg) hover:bg-(--btn-regular-bg-hover) active:bg-(--btn-regular-bg-active) text-(--btn-content);
   }
 
   .link-underline {
-    @apply transition underline decoration-2 decoration-dashed decoration-(--link-underline)
-        hover:decoration-(--link-hover) active:decoration-(--link-active) underline-offset-4;
+    @apply transition-colors duration-200 underline decoration-1 decoration-(--link-underline) hover:decoration-(--primary) underline-offset-4;
   }
 
   .toc-hide,
@@ -94,8 +143,8 @@
     mask-image: linear-gradient(
       to bottom,
       transparent 0%,
-      black 2rem,
-      black calc(100% - 2rem),
+      black 1.5rem,
+      black calc(100% - 1.5rem),
       transparent 100%
     );
   }
@@ -109,39 +158,34 @@
   }
 
   .text-90 {
-    @apply text-black/90 dark:text-white/90;
+    color: var(--ink-strong);
   }
   .text-75 {
-    @apply text-black/75 dark:text-white/75;
+    color: var(--ink-body);
   }
   .text-50 {
-    @apply text-black/50 dark:text-white/50;
+    color: var(--ink-muted);
   }
   .text-30 {
-    @apply text-black/30 dark:text-white/30;
+    color: var(--ink-faint);
   }
   .text-25 {
-    @apply text-black/25 dark:text-white/25;
+    color: var(--ink-faint);
   }
 
   .meta-icon {
-    @apply w-8 h-8 transition rounded-md flex items-center justify-center bg-(--btn-regular-bg)
-        text-(--btn-content) mr-2;
+    @apply w-5 h-5 transition-colors flex items-center justify-center text-(--ink-muted) mr-1.5;
   }
   .with-divider {
-    @apply before:content-['/'] before:ml-1.5 before:mr-1.5 before:text-(--meta-divider) before:text-sm
-        before:font-medium before:first-of-type:hidden before:transition;
+    @apply before:content-['/'] before:ml-2 before:mr-2 before:text-(--meta-divider) before:text-xs before:font-mono before:first-of-type:hidden;
   }
-
 }
 
 @utility btn-regular-dark {
-  @apply flex items-center justify-center
-      bg-[oklch(0.45_0.01_var(--hue))] hover:bg-[oklch(0.50_0.01_var(--hue))] active:bg-[oklch(0.55_0.01_var(--hue))]
-      dark:bg-[oklch(0.30_0.02_var(--hue))] dark:hover:bg-[oklch(0.35_0.03_var(--hue))] dark:active:bg-[oklch(0.40_0.03_var(--hue))];
+  @apply flex items-center justify-center bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-600 border border-white/10;
 
   &.success {
-    @apply bg-[oklch(0.75_0.14_var(--hue))] dark:bg-[oklch(0.75_0.14_var(--hue))];
+    @apply bg-(--primary) border-transparent;
   }
 }
 
@@ -161,13 +205,11 @@
 .dash-line::before {
   content: "";
   position: absolute;
-  width: 10%;
+  width: 1px;
   height: 100%;
-  left: calc(50% - 1px);
-  border-left: 2px dashed var(--line-color);
+  left: 50%;
+  background-color: var(--line-divider);
   pointer-events: none;
-  transition: all 0.3s;
-  transform: translateY(-50%);
 }
 
 .collapsed {
@@ -175,12 +217,12 @@
 }
 
 .custom-md spoiler {
-  @apply bg-(--codeblock-bg) hover:bg-transparent px-1 py-0.5 overflow-hidden rounded-md transition-all duration-150;
+  @apply bg-(--ink-strong) hover:bg-transparent px-1 py-0.5 transition-all duration-150;
 
   &:not(:hover) {
-    color: var(--codeblock-bg);
+    color: var(--ink-strong);
     * {
-      color: var(--codeblock-bg);
+      color: var(--ink-strong);
     }
   }
 }

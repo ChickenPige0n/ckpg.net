@@ -1,0 +1,32 @@
+---
+import type { GetStaticPaths } from "astro";
+import Pagination from "../../../components/control/Pagination.astro";
+import PostPage from "../../../components/PostPage.astro";
+import { PAGE_SIZE } from "../../../constants/constants";
+import I18nKey from "../../../i18n/i18nKey";
+import { getTranslation } from "../../../i18n/translation";
+import MainGridLayout from "../../../layouts/MainGridLayout.astro";
+import { getSortedPosts } from "../../../utils/content-utils";
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const allBlogPosts = await getSortedPosts("en");
+	return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const len = page.data.length;
+const t = getTranslation("en");
+---
+
+<MainGridLayout lang="en" title={t[I18nKey.blog]}>
+	<div class="mb-6 pb-3 border-b border-(--ink-strong) flex items-baseline justify-between swiss-rule-animate">
+		<h1 class="swiss-label text-(--ink-strong)" data-i18n="blog">{t[I18nKey.blog]}</h1>
+		<span class="swiss-num text-xs text-(--ink-muted)">
+			{String(page.total).padStart(2, "0")}
+		</span>
+	</div>
+	<PostPage page={page}></PostPage>
+	{page.lastPage > 1 && (
+		<Pagination class="mx-auto mt-8 onload-animation" page={page} style={`animation-delay: calc(var(--content-delay) + ${len * 45}ms)`}></Pagination>
+	)}
+</MainGridLayout>

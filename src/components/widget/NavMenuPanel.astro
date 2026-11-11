@@ -3,7 +3,7 @@ import { Icon } from "astro-icon/components";
 import I18nKey from "../../i18n/i18nKey";
 import { getTranslation } from "../../i18n/translation";
 import { UI_LANGS } from "../../i18n/ui-language";
-import { type NavBarLink } from "../../types/config";
+import type { NavBarLink } from "../../types/config";
 import { url } from "../../utils/url-utils";
 
 interface Props {
@@ -14,37 +14,39 @@ interface Props {
 const { links, lang = "zh_CN" } = Astro.props;
 const t = getTranslation(lang);
 ---
-<div id="nav-menu-panel" class:list={["float-panel float-panel-closed absolute transition-all right-4 px-2 py-2"]}>
-    {links.map((link) => (
-        <a href={link.external ? link.url : url(link.url)} class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
-            hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active) transition
-        "
-           target={link.external ? "_blank" : null}
-        >
-            <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-(--primary) group-active:text-(--primary)">
-                <span data-i18n={link.i18nKey}>{link.name}</span>
-            </div>
-            {!link.external && <Icon name="material-symbols:chevron-right-rounded"
-                  class="transition text-[1.25rem] text-(--primary)"
+<div id="nav-menu-panel" class:list={["float-panel float-panel-closed absolute right-0 top-16 w-64 p-3 z-50"]}>
+    <div class="divide-y divide-(--line-divider)">
+        {links.map((link) => (
+            <a href={link.external ? link.url : url(link.url)} class="group flex justify-between items-center py-2.5 px-2
+                hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active) transition-colors
+            "
+               target={link.external ? "_blank" : null}
             >
-            </Icon>}
-            {link.external && <Icon name="fa6-solid:arrow-up-right-from-square"
-                  class="transition text-[0.75rem] text-black/25 dark:text-white/25 -translate-x-1"
-            >
-            </Icon>}
-        </a>
-    ))}
-    <div class="border-(--line-divider) border-t my-2 pt-2">
-        <div class="flex items-center gap-2 px-3 py-1 text-sm text-black/40 dark:text-white/40" data-i18n="uiLanguage">
-            <Icon name="material-symbols:globe" class="text-base"></Icon>
+                <div class="text-sm font-medium text-(--ink-strong) group-hover:text-(--primary) transition-colors">
+                    <span data-i18n={link.i18nKey}>{link.name}</span>
+                </div>
+                {!link.external && <Icon name="material-symbols:arrow-forward-rounded"
+                      class="transition-transform duration-200 group-hover:translate-x-0.5 text-[1rem] text-(--ink-muted) group-hover:text-(--primary)"
+                >
+                </Icon>}
+                {link.external && <Icon name="material-symbols:arrow-outward-rounded"
+                      class="text-[0.95rem] text-(--ink-faint)"
+                >
+                </Icon>}
+            </a>
+        ))}
+    </div>
+    <div class="border-(--line-divider) border-t mt-2 pt-2.5">
+        <div class="flex items-center gap-1.5 px-2 py-1 swiss-label" data-i18n="uiLanguage">
+            <Icon name="material-symbols:globe" class="text-sm"></Icon>
             {t[I18nKey.uiLanguage]}
         </div>
-        <div class="grid grid-cols-2 gap-1 max-h-56 overflow-y-auto">
+        <div class="grid grid-cols-2 gap-1 mt-1 max-h-56 overflow-y-auto">
             {UI_LANGS.map((l) => (
                 <button type="button" data-ui-lang={l.code}
-                        class="flex transition whitespace-nowrap items-center justify-between w-full btn-plain scale-animation rounded-lg h-8 px-3 text-sm font-medium active:scale-95">
+                        class="flex transition-colors whitespace-nowrap items-center justify-between w-full btn-plain scale-animation h-8 px-2 text-xs font-medium">
                     <span>{l.label}</span>
-                    <Icon name="material-symbols:check-rounded" class="ui-lang-check hidden text-[1rem] text-(--primary)"></Icon>
+                    <Icon name="material-symbols:check-rounded" class="ui-lang-check hidden text-[0.95rem] text-(--primary)"></Icon>
                 </button>
             ))}
         </div>
@@ -54,7 +56,6 @@ const t = getTranslation(lang);
 <script>
 	import { currentUiLang, selectUiLang } from "../../i18n/ui-lang-client";
 
-	// Mobile menu: pick a UI language from the inline list.
 	function initMobileUiLangs() {
 		const panel = document.getElementById("nav-menu-panel");
 		if (!panel) return;
@@ -68,8 +69,6 @@ const t = getTranslation(lang);
 				if (check) check.classList.remove("hidden");
 			}
 			el.addEventListener("click", () => {
-				// selectUiLang applies the chrome immediately and moves the
-				// highlight in every picker (desktop + mobile).
 				selectUiLang(code || "");
 			});
 		});

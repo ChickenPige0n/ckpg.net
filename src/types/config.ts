@@ -51,6 +51,7 @@ export const LinkPreset = {
 	Home: 0,
 	Archive: 1,
 	About: 2,
+	Blog: 3,
 } as const;
 
 export type LinkPreset = (typeof LinkPreset)[keyof typeof LinkPreset];

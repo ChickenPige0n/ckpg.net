@@ -41,6 +41,11 @@ export function getHomeUrl(lang: string = siteConfig.lang): string {
 	return isEnglishLang(lang) ? url("/en/") : url("/");
 }
 
+/** Paginated blog index URL in a given language (`/blog/` or `/en/blog/`). */
+export function getBlogUrl(lang: string = siteConfig.lang): string {
+	return isEnglishLang(lang) ? url("/en/blog/") : url("/blog/");
+}
+
 /** Archive URL in a given language. */
 export function getArchiveUrl(lang: string = siteConfig.lang): string {
 	return isEnglishLang(lang) ? url("/en/archive/") : url("/archive/");

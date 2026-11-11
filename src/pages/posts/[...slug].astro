@@ -37,14 +37,12 @@ export async function getStaticPaths() {
 }
 
 const { entry, langSiblingId = "" } = Astro.props;
-const { Content, headings } = await render(entry);
+const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 
-// Utility strings on the post page follow the post's own language.
 const postLang = entry.data.lang || siteConfig.lang;
 const t = getTranslation(postLang);
 const english = isEnglishLang(postLang);
 
-// Available translations of this article (zh original / en mirror).
 const postIsZh = !english;
 const zhHref = postIsZh
 	? ""
@@ -56,8 +54,6 @@ const enHref = postIsZh
 		? getPostUrlBySlug(langSiblingId)
 		: ""
 	: "";
-
-const { remarkPluginFrontmatter } = await render(entry);
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -82,124 +78,126 @@ const jsonLd = {
 	inLanguage: entry.data.lang
 		? entry.data.lang.replace("_", "-")
 		: siteConfig.lang.replace("_", "-"),
-	// TODO include cover image here
 };
 ---
 <MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={postLang} setOGTypeArticle={true} headings={headings} langSwitchHref={langSiblingId ? getPostUrlBySlug(langSiblingId) : ""}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
-    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative mb-4">
-        <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
-            {}
-        ]}>
-            <!-- word count and reading time -->
-            <div class="flex flex-row items-center justify-between mb-3 transition onload-animation">
-                <div class="flex flex-row text-black/30 dark:text-white/30 gap-5">
-                    <div class="flex flex-row items-center">
-                        <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
-                            <Icon name="material-symbols:notes-rounded"></Icon>
-                        </div>
-                        <div class="text-sm">{remarkPluginFrontmatter.words} {" " + t[I18nKey.wordsCount]}</div>
-                    </div>
-                    <div class="flex flex-row items-center">
-                        <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
-                            <Icon name="material-symbols:schedule-outline-rounded"></Icon>
-                        </div>
-                        <div class="text-sm">
-                            {remarkPluginFrontmatter.minutes} {" " + t[remarkPluginFrontmatter.minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount]}
-                        </div>
+
+    <article id="post-container" class="w-full relative mb-8">
+        <!-- Top Swiss Editorial Metadata Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-3 mb-6 border-b border-(--ink-strong) onload-animation">
+            <div class="flex items-center gap-4 swiss-num text-xs text-(--ink-muted)">
+                <span>{remarkPluginFrontmatter.words} {t[I18nKey.wordsCount]}</span>
+                <span>·</span>
+                <span>{remarkPluginFrontmatter.minutes} {t[remarkPluginFrontmatter.minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount]}</span>
+            </div>
+
+            {(zhHref || enHref) && (
+                <div class="flex items-center gap-2 text-xs swiss-num">
+                    <span class="text-(--ink-faint) hidden sm:inline uppercase tracking-wider" data-i18n="articleLanguage">{t[I18nKey.articleLanguage]}</span>
+                    <div class="flex items-center border border-(--line-divider)">
+                        {postIsZh ? (
+                            <span class="px-2.5 h-6 inline-flex items-center bg-(--ink-strong) text-(--page-bg) font-medium">中文</span>
+                        ) : zhHref ? (
+                            <a href={zhHref} data-no-swup data-lang-switch="zh" aria-label="Read this article in Chinese"
+                               class="px-2.5 h-6 inline-flex items-center text-(--ink-muted) hover:text-(--ink-strong) transition-colors">中文</a>
+                        ) : null}
+                        {!postIsZh ? (
+                            <span class="px-2.5 h-6 inline-flex items-center bg-(--ink-strong) text-(--page-bg) font-medium">EN</span>
+                        ) : enHref ? (
+                            <a href={enHref} data-no-swup data-lang-switch="en" aria-label="Read this article in English"
+                               class="px-2.5 h-6 inline-flex items-center text-(--ink-muted) hover:text-(--ink-strong) transition-colors">EN</a>
+                        ) : null}
                     </div>
                 </div>
-                    {(zhHref || enHref) && (
-                        <div class="flex flex-row items-center gap-2 text-sm shrink-0 ml-4">
-                            <span class="text-black/40 dark:text-white/40 hidden sm:inline" data-i18n="articleLanguage">{t[I18nKey.articleLanguage]}</span>
-                            <div class="flex flex-row items-center gap-1">
-                                {postIsZh ? (
-                                    <span class="btn-plain scale-animation current-theme-btn rounded-lg h-7 px-2.5 text-xs font-bold">中文</span>
-                                ) : zhHref ? (
-                                    <a href={zhHref} data-no-swup data-lang-switch="zh" aria-label="Read this article in Chinese"
-                                       class="btn-plain scale-animation rounded-lg h-7 px-2.5 text-xs font-bold active:scale-95">中文</a>
-                                ) : null}
-                                {!postIsZh ? (
-                                    <span class="btn-plain scale-animation current-theme-btn rounded-lg h-7 px-2.5 text-xs font-bold">English</span>
-                                ) : enHref ? (
-                                    <a href={enHref} data-no-swup data-lang-switch="en" aria-label="Read this article in English"
-                                       class="btn-plain scale-animation rounded-lg h-7 px-2.5 text-xs font-bold active:scale-95">English</a>
-                                ) : null}
-                            </div>
-                        </div>
-                    )}
-            </div>
-
-            <!-- title -->
-            <div class="relative onload-animation">
-                <div
-                    data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
-                    data-pagefind-filter="lang" data-pagefind-filter-value={english ? "en" : "zh"}
-                    class="transition w-full block font-bold mb-3
-                    text-3xl md:text-[2.25rem]/[2.75rem]
-                    text-black/90 dark:text-white/90
-                    md:before:w-1 before:h-5 before:rounded-md before:bg-(--primary)
-                    before:absolute before:top-3 before:-left-4.5
-                ">
-                    {entry.data.title}
-                </div>
-            </div>
-
-            <!-- metadata -->
-            <div class="onload-animation">
-                <PostMetadata
-                        class="mb-5"
-                        published={entry.data.published}
-                        updated={entry.data.updated}
-                        tags={entry.data.tags}
-                        category={entry.data.category}
-                        lang={postLang}
-                ></PostMetadata>
-                {entry.data.translatedBy && (
-                    <div class="flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 mb-3">
-                        <Icon name="material-symbols:translate-rounded" class="text-base"></Icon>
-                        <span>{renderTemplate(t[I18nKey.translatedBy], { translatedBy: entry.data.translatedBy })}</span>
-                    </div>
-                )}
-                {!entry.data.image && <div class="border-(--line-divider) border-dashed border-b mb-5"></div>}
-            </div>
-
-            <!-- always show cover as long as it has one -->
-
-            {entry.data.image &&
-                <ImageWrapper id="post-cover" src={entry.data.image} basePath={path.join("content/posts/", getContentDir(entry.id))} class="mb-8 rounded-xl banner-container onload-animation"/>
-            }
-
-
-            <Markdown class="mb-6 markdown-content onload-animation">
-                <Content />
-            </Markdown>
-
-            {licenseConfig.enable && <License title={entry.data.title} slug={entry.id} pubDate={entry.data.published} lang={postLang} class="mb-6 rounded-xl license-container onload-animation"></License>}
-
+            )}
         </div>
-    </div>
 
-    <div class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full">
-        <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
-           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
-            {entry.data.nextSlug && <div class="btn-card rounded-2xl w-full h-15 max-w-full px-4 flex items-center justify-start! gap-4" >
-                <Icon name="material-symbols:chevron-left-rounded" class="text-[2rem] text-(--primary)" />
-                <div class="overflow-hidden transition text-ellipsis whitespace-nowrap max-w-[calc(100%-3rem)] text-black/75 dark:text-white/75">
-                    {entry.data.nextTitle}
+        <!-- Title -->
+        <header class="mb-8 onload-animation">
+            <h1
+                data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
+                data-pagefind-filter="lang" data-pagefind-filter-value={english ? "en" : "zh"}
+                class="font-bold text-3xl md:text-4xl lg:text-[2.65rem] leading-[1.12] tracking-[-0.03em] text-(--ink-strong) mb-5"
+            >
+                {entry.data.title}
+            </h1>
+
+            <PostMetadata
+                class="mb-3"
+                published={entry.data.published}
+                updated={entry.data.updated}
+                tags={entry.data.tags}
+                category={entry.data.category}
+                lang={postLang}
+            ></PostMetadata>
+
+            {entry.data.translatedBy && (
+                <div class="flex items-center gap-1.5 text-xs swiss-num text-(--ink-muted) mt-2">
+                    <Icon name="material-symbols:translate-rounded" class="text-sm"></Icon>
+                    <span>{renderTemplate(t[I18nKey.translatedBy], { translatedBy: entry.data.translatedBy })}</span>
                 </div>
-            </div>}
-        </a>
+            )}
 
-        <a href={entry.data.prevSlug ? getPostUrlBySlug(entry.data.prevSlug) : "#"}
-           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.prevSlug}]}>
-            {entry.data.prevSlug && <div class="btn-card rounded-2xl w-full h-15 max-w-full px-4 flex items-center justify-end! gap-4">
-                <div class="overflow-hidden transition text-ellipsis whitespace-nowrap max-w-[calc(100%-3rem)] text-black/75 dark:text-white/75">
-                    {entry.data.prevTitle}
-                </div>
-                <Icon name="material-symbols:chevron-right-rounded" class="text-[2rem] text-(--primary)" />
-            </div>}
-        </a>
-    </div>
+            <div class="border-b border-(--line-divider) mt-6"></div>
+        </header>
 
+        {entry.data.image && (
+            <ImageWrapper
+                id="post-cover"
+                src={entry.data.image}
+                basePath={path.join("content/posts/", getContentDir(entry.id))}
+                class="mb-8 border border-(--line-divider) banner-container onload-animation"
+            />
+        )}
+
+        <Markdown class="mb-10 markdown-content onload-animation">
+            <Content />
+        </Markdown>
+
+        {licenseConfig.enable && (
+            <License
+                title={entry.data.title}
+                slug={entry.id}
+                pubDate={entry.data.published}
+                lang={postLang}
+                class="mb-6 license-container onload-animation"
+            ></License>
+        )}
+    </article>
+
+    <!-- Prev / Next Navigation -->
+    {(entry.data.nextSlug || entry.data.prevSlug) && (
+        <nav class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-(--line-divider)">
+            <div>
+                {entry.data.nextSlug && (
+                    <a href={getPostUrlBySlug(entry.data.nextSlug)}
+                       class="group block p-4 border border-(--line-divider) hover:border-(--ink-strong) transition-colors duration-200">
+                        <div class="swiss-label mb-1 flex items-center gap-1">
+                            <Icon name="material-symbols:arrow-back-rounded" class="text-sm transition-transform duration-200 group-hover:-translate-x-0.5" />
+                            <span>NEWER</span>
+                        </div>
+                        <div class="font-medium text-sm text-(--ink-strong) group-hover:text-(--primary) transition-colors truncate">
+                            {entry.data.nextTitle}
+                        </div>
+                    </a>
+                )}
+            </div>
+
+            <div>
+                {entry.data.prevSlug && (
+                    <a href={getPostUrlBySlug(entry.data.prevSlug)}
+                       class="group block p-4 border border-(--line-divider) hover:border-(--ink-strong) transition-colors duration-200 text-right">
+                        <div class="swiss-label mb-1 flex items-center justify-end gap-1">
+                            <span>OLDER</span>
+                            <Icon name="material-symbols:arrow-forward-rounded" class="text-sm transition-transform duration-200 group-hover:translate-x-0.5" />
+                        </div>
+                        <div class="font-medium text-sm text-(--ink-strong) group-hover:text-(--primary) transition-colors truncate">
+                            {entry.data.prevTitle}
+                        </div>
+                    </a>
+                )}
+            </div>
+        </nav>
+    )}
 </MainGridLayout>

@@ -18,7 +18,6 @@ const className = Astro.props.class;
 const ADJ_DIST = 2;
 const VISIBLE = ADJ_DIST * 2 + 1;
 
-// for test
 let count = 1;
 let l = page.currentPage;
 let r = page.currentPage;
@@ -46,40 +45,40 @@ if (r === page.lastPage - 2) pages.push(page.lastPage - 1);
 if (r < page.lastPage) pages.push(page.lastPage);
 
 const getPageUrl = (p: number) => {
-	const base = Astro.url.pathname.startsWith("/en/") ? "/en/" : "/";
+	const base = Astro.url.pathname.startsWith("/en/") ? "/en/blog/" : "/blog/";
 	if (p === 1) return base;
 	return `${base}${p}/`;
 };
 ---
 
-<div class:list={[className, "flex flex-row gap-3 justify-center"]} style={style}>
+<div class:list={[className, "flex flex-row gap-2 justify-between items-center pt-4 swiss-num text-xs"]} style={style}>
     <a href={page.url.prev || ""} aria-label={page.url.prev ? "Previous Page" : null}
-       class:list={["btn-card overflow-hidden rounded-lg text-(--primary) w-11 h-11",
+       class:list={["btn-card px-3 h-9 gap-1 text-(--ink-strong)",
            {"disabled": page.url.prev == undefined}
        ]}
     >
-        <Icon name="material-symbols:chevron-left-rounded" class="text-[1.75rem]"></Icon>
+        <Icon name="material-symbols:arrow-back-rounded" class="text-[1rem]"></Icon>
+        <span>PREV</span>
     </a>
-    <div class="bg-(--card-bg) flex flex-row rounded-lg items-center text-neutral-700 dark:text-neutral-300 font-bold">
+    <div class="flex flex-row items-center gap-1">
         {pages.map((p) => {
             if (p == HIDDEN)
-                return <Icon name="material-symbols:more-horiz" class="mx-1"/>;
+                return <Icon name="material-symbols:more-horiz" class="mx-1 text-(--ink-muted)"/>;
             if (p == page.currentPage)
-                return <div class="h-11 w-11 rounded-lg bg-(--primary) flex items-center justify-center
-                    font-bold text-white dark:text-black/70"
-                >
-                    {p}
+                return <div class="h-9 w-9 bg-(--ink-strong) text-(--page-bg) flex items-center justify-center font-semibold">
+                    {String(p).padStart(2, "0")}
                 </div>
             return <a href={url(getPageUrl(p))} aria-label={`Page ${p}`}
-                class="btn-card w-11 h-11 rounded-lg overflow-hidden active:scale-[0.85]"
-            >{p}</a>
+                class="btn-card w-9 h-9 text-(--ink-body)"
+            >{String(p).padStart(2, "0")}</a>
         })}
     </div>
     <a href={page.url.next || ""} aria-label={page.url.next ? "Next Page" : null}
-       class:list={["btn-card overflow-hidden rounded-lg text-(--primary) w-11 h-11",
+       class:list={["btn-card px-3 h-9 gap-1 text-(--ink-strong)",
            {"disabled": page.url.next == undefined}
        ]}
     >
-        <Icon name="material-symbols:chevron-right-rounded" class="text-[1.75rem]"></Icon>
+        <span>NEXT</span>
+        <Icon name="material-symbols:arrow-forward-rounded" class="text-[1rem]"></Icon>
     </a>
 </div>

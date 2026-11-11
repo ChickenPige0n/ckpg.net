@@ -7,6 +7,7 @@ import { LinkPreset, type NavBarLink } from "../types/config";
 import {
 	getAboutUrl,
 	getArchiveUrl,
+	getBlogUrl,
 	getHomeUrl,
 	url,
 } from "../utils/url-utils";
@@ -23,11 +24,13 @@ const english = isEnglishLang(pageLang);
 
 const presetNames: Record<number, I18nKey> = {
 	[LinkPreset.Home]: I18nKey.home,
+	[LinkPreset.Blog]: I18nKey.blog,
 	[LinkPreset.About]: I18nKey.about,
 	[LinkPreset.Archive]: I18nKey.archive,
 };
 const presetUrls: Record<number, string> = {
 	[LinkPreset.Home]: getHomeUrl(pageLang),
+	[LinkPreset.Blog]: getBlogUrl(pageLang),
 	[LinkPreset.About]: getAboutUrl(pageLang),
 	[LinkPreset.Archive]: getArchiveUrl(pageLang),
 };
@@ -46,47 +49,45 @@ let links: NavBarLink[] = navBarConfig.links.map(
 	},
 );
 ---
-<div id="navbar" class="z-50 onload-animation">
-    <div class="absolute h-8 left-0 right-0 -top-8 bg-(--card-bg) transition"></div> <!-- used for onload animation -->
+<nav id="navbar" class="z-50 onload-animation">
     <div class:list={[
         className,
-        "card-base overflow-visible! max-w-(--page-width) h-18 rounded-t-none! mx-auto flex items-center justify-between px-4"]}>
-        <a href={english ? url("/en/") : url("/")} class="btn-plain scale-animation rounded-lg h-13 px-5 font-bold active:scale-95">
-            <div class="flex flex-row text-(--primary) items-center text-md">
-                <Icon name="material-symbols:home-outline-rounded" class="text-[1.75rem] mb-1 mr-2" />
-                {siteConfig.title}
-            </div>
+        "overflow-visible! h-16 flex items-center justify-between gap-4 relative"]}>
+        <a href={english ? url("/en/") : url("/")} class="group flex items-center gap-2.5 h-10 pr-3 font-semibold tracking-tight text-(--ink-strong) hover:text-(--primary) transition-colors duration-200">
+            <span class="w-2.5 h-2.5 bg-(--primary) transition-transform duration-200 group-hover:scale-125"></span>
+            <span class="text-base tracking-[-0.02em]">{siteConfig.title}</span>
         </a>
-        <div class="hidden md:flex">
+
+        <div class="hidden md:flex items-center gap-6">
             {links.map((l) => {
                 return <a aria-label={l.name} href={l.external ? l.url : url(l.url)} target={l.external ? "_blank" : null}
-                          class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95"
+                          class="swiss-link-sweep py-1 text-sm font-medium text-(--ink-body) hover:text-(--ink-strong) transition-colors duration-200"
                 >
-                    <div class="flex items-center">
+                    <span class="inline-flex items-center gap-1">
                         <span data-i18n={l.i18nKey}>{l.name}</span>
-                        {l.external && <Icon name="fa6-solid:arrow-up-right-from-square" class="text-[0.875rem] transition -translate-y-px ml-1 text-black/20 dark:text-white/20"></Icon>}
-                    </div>
+                        {l.external && <Icon name="material-symbols:arrow-outward-rounded" class="text-[0.875rem] text-(--ink-faint)"></Icon>}
+                    </span>
                 </a>;
             })}
         </div>
-        <div class="flex">
-            <!--<SearchPanel client:load>-->
+
+        <div class="flex items-center gap-1">
             <Search lang={pageLang} client:only="svelte"></Search>
             {!siteConfig.themeColor.fixed && (
-                    <button aria-label="Display Settings" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="display-settings-switch">
-                        <Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
+                    <button aria-label="Display Settings" class="btn-plain h-9 w-9" id="display-settings-switch">
+                        <Icon name="material-symbols:palette-outline" class="text-[1.15rem]"></Icon>
                     </button>
             )}
             <LightDarkSwitch lang={pageLang} client:only="svelte"></LightDarkSwitch>
-            <UiLanguagePicker class="hidden md:flex ml-2" lang={pageLang}></UiLanguagePicker>
-            <button aria-label="Menu" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 md:hidden!" id="nav-menu-switch">
+            <UiLanguagePicker class="hidden md:flex" lang={pageLang}></UiLanguagePicker>
+            <button aria-label="Menu" name="Nav Menu" class="btn-plain w-9 h-9 md:hidden!" id="nav-menu-switch">
                 <Icon name="material-symbols:menu-rounded" class="text-[1.25rem]"></Icon>
             </button>
         </div>
         <NavMenuPanel links={links} lang={pageLang}></NavMenuPanel>
         <DisplaySettings lang={pageLang} client:only="svelte"></DisplaySettings>
     </div>
-</div>
+</nav>
 
 <script>
 function switchTheme() {

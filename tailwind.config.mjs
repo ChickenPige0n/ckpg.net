@@ -5,7 +5,21 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ["Roboto", "sans-serif", ...defaultTheme.fontFamily.sans],
+				sans: [
+					'"Inter Variable"',
+					"Inter",
+					'"Helvetica Neue"',
+					"Helvetica",
+					'"PingFang SC"',
+					'"Hiragino Sans GB"',
+					'"Noto Sans CJK SC"',
+					'"Microsoft YaHei"',
+					...defaultTheme.fontFamily.sans,
+				],
+				mono: [
+					'"JetBrains Mono Variable"',
+					...defaultTheme.fontFamily.mono,
+				],
 			},
 		},
 	},
