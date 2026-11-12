@@ -14,7 +14,7 @@ import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 
 const seq: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE, AUTO_MODE];
 let { lang = siteConfig.lang }: { lang?: string } = $props();
-const t = getTranslation(lang);
+const t = $derived(getTranslation(lang));
 let mode: LIGHT_DARK_MODE = $state(AUTO_MODE);
 
 onMount(() => {
