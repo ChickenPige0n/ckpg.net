@@ -91,7 +91,7 @@ onMount(async () => {
 </script>
 
 <div>
-  <div class="mb-6 pb-3 border-b border-(--ink-strong) flex items-baseline justify-between swiss-rule-animate">
+  <div class="mb-6 pb-3 border-b border-(--ink-strong) flex items-baseline justify-between">
     <div class="flex flex-wrap items-center gap-2">
       <h1 class="swiss-label text-(--ink-strong)" data-i18n="archive">{t[I18nKey.archive]}</h1>
       {#if categories.length > 0}
@@ -107,7 +107,7 @@ onMount(async () => {
     {#each groups as group}
       <section class="grid grid-cols-1 md:grid-cols-[7.5rem_minmax(0,1fr)] gap-y-3 md:gap-x-6 items-start">
         <div class="flex md:flex-col items-baseline justify-between md:justify-start pt-2 border-t border-(--line-color) md:border-t-0">
-          <div class="swiss-num text-2xl font-bold tracking-tight text-(--ink-strong)">
+          <div class="swiss-num text-2xl font-bold text-(--ink-strong)">
             {group.year}
           </div>
           <div class="swiss-num text-xs text-(--ink-muted) mt-0.5">

@@ -1,20 +1,31 @@
 ---
-import { profileConfig } from "../config";
+import { licenseConfig, profileConfig, siteConfig } from "../config";
+import { isEnglishLang } from "../i18n/translation";
 import { url } from "../utils/url-utils";
 
+interface Props {
+	lang?: string;
+}
+
+const { lang = siteConfig.lang } = Astro.props;
 const currentYear = new Date().getFullYear();
+const english = isEnglishLang(lang);
 ---
 
 <footer class="mt-16 pt-6 pb-12 border-t border-(--line-divider)">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs swiss-num text-(--ink-muted)">
-        <div>
-            &copy; <span id="copyright-year">{currentYear}</span> {profileConfig.name}. All rights reserved.
+        <div class="flex flex-col gap-1">
+            <span>&copy; <span id="copyright-year">{currentYear}</span> {profileConfig.name}</span>
+            {licenseConfig.enable && <span>
+                {english ? "Articles licensed under " : "文章采用 "}
+                <a class="swiss-link-sweep hover:text-(--ink-strong) transition-colors" href={licenseConfig.url} target="_blank" rel="noopener noreferrer">
+                    {licenseConfig.name}
+                </a>
+            </span>}
         </div>
         <div class="flex flex-wrap items-center gap-4">
             <a class="swiss-link-sweep hover:text-(--ink-strong) transition-colors" target="_blank" href={url('rss.xml')}>RSS</a>
-            <span class="text-(--ink-faint)">/</span>
             <a class="swiss-link-sweep hover:text-(--ink-strong) transition-colors" target="_blank" href={url('sitemap-index.xml')}>SITEMAP</a>
-            <span class="text-(--ink-faint)">/</span>
             <span>
                 BUILT WITH <a class="swiss-link-sweep text-(--ink-body) hover:text-(--primary)" target="_blank" href="https://astro.build">ASTRO</a>
             </span>

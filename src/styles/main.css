@@ -8,12 +8,25 @@
 @import "./scrollbar.css";
 @import "./photoswipe.css";
 
+@theme {
+  --text-xs: 0.875rem;
+  --text-xs--line-height: 1.35rem;
+}
+
 @layer base {
   html {
+    font-size: 16px;
+    line-height: 1.5;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: var(--ink-body);
+  }
+
+  small,
+  sub,
+  sup {
+    font-size: max(0.875rem, 0.75em);
   }
 }
 
@@ -47,8 +60,10 @@
       Monaco,
       Consolas,
       monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
+    font-size: 0.875rem;
+    letter-spacing: 0;
+    line-height: 1.4;
+    font-weight: 500;
     text-transform: uppercase;
     font-variant-numeric: tabular-nums;
     color: var(--ink-muted);
@@ -64,6 +79,7 @@
       Consolas,
       monospace;
     font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "zero" 1;
   }
 
   .swiss-rule {
@@ -176,9 +192,6 @@
   .meta-icon {
     @apply w-5 h-5 transition-colors flex items-center justify-center text-(--ink-muted) mr-1.5;
   }
-  .with-divider {
-    @apply before:content-['/'] before:ml-2 before:mr-2 before:text-(--meta-divider) before:text-xs before:font-mono before:first-of-type:hidden;
-  }
 }
 
 @utility btn-regular-dark {
@@ -189,7 +202,7 @@
   }
 }
 
-.custom-md img,
+.custom-md img:not(a img),
 #post-cover img {
   @apply cursor-zoom-in;
 }

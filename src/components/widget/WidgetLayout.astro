@@ -25,7 +25,7 @@ const className = Astro.props.class;
         <slot></slot>
     </div>
     {isCollapsed && <div class="expand-btn mt-2">
-        <button class="btn-plain w-full h-8 text-xs font-mono uppercase tracking-wider justify-start!">
+        <button class="btn-plain w-full h-8 text-xs font-mono uppercase justify-start!">
             <div class="text-(--primary) flex items-center gap-1.5">
                 <Icon name="material-symbols:add" class="text-[1rem]"></Icon>
                 <span data-i18n={I18nKey.more}>{t[I18nKey.more]}</span>

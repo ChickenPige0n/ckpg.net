@@ -58,7 +58,7 @@ const t = getTranslation(postLang);
         <!-- Center column: Title, Excerpt, Tags & Read Stats -->
         <div class="min-w-0">
             <a href={url} class="block group/title">
-                <h2 class="text-xl md:text-2xl font-semibold tracking-[-0.02em] leading-snug text-(--ink-strong) group-hover/title:text-(--primary) transition-colors duration-200 inline-flex items-baseline gap-2">
+                <h2 class="text-xl md:text-2xl font-semibold leading-snug text-(--ink-strong) group-hover/title:text-(--primary) transition-colors duration-200 inline-flex items-baseline gap-2">
                     <span>{title}</span>
                     <Icon name="material-symbols:arrow-forward-rounded" class="text-lg shrink-0 text-(--primary) opacity-0 -translate-x-1.5 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-200 translate-y-0.5" />
                 </h2>
@@ -72,21 +72,17 @@ const t = getTranslation(postLang);
                 <span>
                     {remarkPluginFrontmatter.words} {t[remarkPluginFrontmatter.words === 1 ? I18nKey.wordCount : I18nKey.wordsCount]}
                 </span>
-                <span>·</span>
                 <span>
                     {remarkPluginFrontmatter.minutes} {t[remarkPluginFrontmatter.minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount]}
                 </span>
                 {tags && tags.length > 0 && (
-                    <>
-                        <span class="hidden sm:inline">·</span>
-                        <div class="hidden sm:flex flex-wrap gap-2">
-                            {tags.map((tag) => (
-                                <a href={getTagUrl(tag, postLang)} class="text-(--ink-muted) hover:text-(--primary) transition-colors">
-                                    #{tag.trim()}
-                                </a>
-                            ))}
-                        </div>
-                    </>
+                    <div class="hidden sm:flex flex-wrap gap-2">
+                        {tags.map((tag) => (
+                            <a href={getTagUrl(tag, postLang)} class="text-(--ink-muted) hover:text-(--primary) transition-colors">
+                                #{tag.trim()}
+                            </a>
+                        ))}
+                    </div>
                 )}
             </div>
         </div>

@@ -1,13 +1,102 @@
 @reference "tailwindcss";
 
 .expressive-code {
+  color: #e1e4e8;
+
   .frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--line-color);
+    border-radius: 4px;
+    background: var(--codeblock-bg);
     @apply shadow-none!;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.25rem 1rem;
+    border-bottom: 1px solid var(--line-color);
+    background: var(--codeblock-topbar-bg);
+    color: var(--ink-muted);
+  }
+
+  .title {
+    font-size: 0.8125rem;
   }
 
   .title {
     font-family:
       "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco,
       Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  pre {
+    display: flex;
+    overflow-x: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--codeblock-bg);
+    color: #e1e4e8;
+  }
+
+  pre > code {
+    display: block;
+    flex: 1 0 100%;
+    box-sizing: border-box;
+    padding: 1rem 0;
+    background: transparent;
+    color: #e1e4e8;
+    font-family:
+      "JetBrains Mono Variable",
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+  }
+
+  .ec-line {
+    position: relative;
+    display: grid;
+    grid-template-areas: "gutter code";
+    grid-template-columns: 2rem minmax(0, 1fr);
+    min-height: 1.5rem;
+  }
+
+  .ec-line .gutter {
+    grid-area: gutter;
+    box-sizing: border-box;
+    padding-inline-end: 0.5rem;
+    color: #737b86;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+  }
+
+  .ec-line .code {
+    grid-area: code;
+    min-width: 0;
+    padding-inline: 1rem;
+    border-inline-start: 1.5px solid transparent;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .ec-line .code .indent {
+    white-space: pre;
+  }
+
+  .ec-line .code span[style^="--"] {
+    color: var(--0, #e1e4e8);
   }
 }

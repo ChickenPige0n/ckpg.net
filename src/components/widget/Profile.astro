@@ -20,7 +20,7 @@ const lang = Astro.props.lang || siteConfig.lang;
             <ImageWrapper src={config.avatar || ""} alt="Profile Image of the Author" class="w-full h-full"></ImageWrapper>
         </a>
         <div>
-            <a href={getAboutUrl(lang)} class="font-semibold text-base tracking-tight text-(--ink-strong) hover:text-(--primary) transition-colors block">
+            <a href={getAboutUrl(lang)} class="font-semibold text-base text-(--ink-strong) hover:text-(--primary) transition-colors block">
                 {config.name}
             </a>
             <div class="text-xs leading-relaxed text-(--ink-muted) mt-1">{config.bio}</div>

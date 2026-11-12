@@ -15,9 +15,9 @@ export function pluginLanguageBadge(): ExpressiveCodePlugin {
         padding: 0.1rem 0.45rem;
         content: attr(data-language);
         font-family: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 0.68rem;
+        font-size: 0.875rem;
         font-weight: 500;
-        letter-spacing: 0.08em;
+        letter-spacing: 0;
         text-transform: uppercase;
         color: rgba(255, 255, 255, 0.55);
         background: rgba(255, 255, 255, 0.06);

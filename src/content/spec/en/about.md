@@ -1,6 +1,6 @@
 # About
 
-Hi, I'm **ChickenPige0n**, real name Taoyuan Ye (叶涛源), a developer and currently an undergraduate student at Shenzhen University of Advanced Technology (深圳理工大学).
+Hi, I'm **ChickenPige0n**, a developer and currently an undergraduate student at Shenzhen University of Advanced Technology (深圳理工大学).
 
 You can reach me via:
 

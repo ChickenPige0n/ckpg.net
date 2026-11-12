@@ -9,7 +9,7 @@ import { LinkPreset } from "./types/config.ts";
 
 export const siteConfig: SiteConfig = {
 	title: "ChickenPige0n",
-	subtitle: "Taoyuan Ye · Developer & Researcher",
+	subtitle: "Hello World.",
 	lang: "zh_CN", // Language code, e.g. 'en', 'zh_CN', 'ja', etc.
 	themeColor: {
 		hue: 25, // Swiss International Vermilion accent

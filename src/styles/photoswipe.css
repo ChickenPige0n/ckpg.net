@@ -13,3 +13,9 @@
 .pswp__button--close {
   @apply mr-4!;
 }
+
+.custom-md img:focus-visible,
+#post-cover img:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}

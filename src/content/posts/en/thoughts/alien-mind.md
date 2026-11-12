@@ -15,7 +15,7 @@ translatedBy: deepseek-v4.1-flash
 Today's mainstream LLMs are Transformer-based Next Token Prediction machines: they inject world knowledge by pretraining on massive corpora, then use SFT to reshape their output into a conversational style, and finally, through post-training methods such as RLHF and RLVR, align with human preferences, control safety risks, improve tool-call correctness, enhance generalization, and build `long-horizon agentic coding ability`.
 
 
-On various occasions, at different times and in different places, I have voiced my dissatisfaction with the intelligence level of AI / LLMs / Agents more than once. Intelligence is a broad word; Wikipedia defines it as follows:
+On various occasions, at different times and in different places, I have voiced my dissatisfaction with the intelligence level of AI, LLMs, and agents. Intelligence is a broad word; Wikipedia defines it as follows:
 
 >Intelligence refers to the general mental capacity of living beings. This capacity includes the following: reasoning, understanding, planning, problem solving, abstraction, expressing ideas, as well as the abilities of language and learning. Although the definition and importance of intelligence remain debated, especially in mainstream publications, researchers are still able to hold consensus on quite a few intelligence-related questions.
 
@@ -54,7 +54,7 @@ However, human **working memory** is limited — the psychologist George Miller'
 
 Humans possess **agency** — we are independent actors with self-awareness, intentions, and goals. This agency is rooted in our internal **world model** of the world. From infancy onward, we build an understanding of causality, physical laws, and social rules through interaction with the physical world. This world model is **embodied** — we understand the world through bodily perception and action.
 
-Personally, I think the most important thing in RSI is the Self, that is, the ability to improve one's own performance according to one's own needs, which requires extremely strong metacognition / introspection, or in other words self-awareness. The alignment of current AI models relies on values and intentions manually injected by humans; models are rarely able to be aware of their own state and to produce autonomous, responsible actions with agency.
+Personally, I think the most important thing in RSI is the Self, that is, the ability to improve one's own performance according to one's own needs, which requires extremely strong metacognition and introspection, or in other words self-awareness. The alignment of current AI models relies on values and intentions manually injected by humans; models are rarely able to be aware of their own state and to produce autonomous, responsible actions with agency.
 
 LLMs lack embodied experience. They have never touched an object, felt gravity, or experienced the passage of time. Although multimodal models can process visual and auditory input, this is still processing at the symbolic level rather than genuine perceptual experience. As a result, LLMs perform unstably in commonsense reasoning, physical intuition, social interaction, and other areas.
 

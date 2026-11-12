@@ -38,7 +38,7 @@ const maxLevel = siteConfig.toc.depth;
             <a href={`#${heading.slug}`} class="px-2 flex items-baseline gap-2 relative transition-colors w-full py-1.5 text-xs
         text-(--ink-muted) hover:text-(--ink-strong)
     ">
-                <span class:list={["swiss-num text-[0.68rem] shrink-0 text-(--ink-faint)",
+                <span class:list={["swiss-num text-xs shrink-0 text-(--ink-faint)",
                     {
                         "ml-3": heading.depth == minDepth + 1,
                         "ml-6": heading.depth == minDepth + 2,
@@ -46,7 +46,7 @@ const maxLevel = siteConfig.toc.depth;
                 ]}>
                     {heading.depth == minDepth && String(heading1Count++).padStart(2, "0")}
                     {heading.depth == minDepth + 1 && "—"}
-                    {heading.depth == minDepth + 2 && "·"}
+                    {heading.depth == minDepth + 2 && <span aria-hidden="true" class="ml-1 inline-block size-1 rounded-full bg-current"></span>}
                 </span>
                 <span class="truncate leading-snug">{removeTailingHash(heading.text)}</span>
             </a>

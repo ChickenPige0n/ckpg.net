@@ -31,21 +31,21 @@ const t = getTranslation(lang || siteConfig.lang);
 <div class:list={["flex flex-wrap items-center gap-x-5 gap-y-2 text-xs swiss-num text-(--ink-muted)", className]}>
     <!-- publish date -->
     <div class="flex items-center gap-1.5">
-        <span class="text-(--ink-faint) uppercase tracking-wider">PUB</span>
+        <span class="text-(--ink-faint) uppercase">PUB</span>
         <time datetime={published.toISOString()} class="text-(--ink-body)">{formatDateToYYYYMMDD(published)}</time>
     </div>
 
     <!-- update date -->
     {!hideUpdateDate && updated && updated.getTime() !== published.getTime() && (
         <div class="flex items-center gap-1.5">
-            <span class="text-(--ink-faint) uppercase tracking-wider">UPD</span>
+            <span class="text-(--ink-faint) uppercase">UPD</span>
             <time datetime={updated.toISOString()} class="text-(--ink-body)">{formatDateToYYYYMMDD(updated)}</time>
         </div>
     )}
 
     <!-- categories -->
     <div class="flex items-center gap-1.5">
-        <span class="text-(--ink-faint) uppercase tracking-wider">CAT</span>
+        <span class="text-(--ink-faint) uppercase">CAT</span>
         <a href={getCategoryUrl(category, lang || siteConfig.lang)} aria-label={`View all posts in the ${category} category`}
            class="text-(--ink-body) hover:text-(--primary) transition-colors whitespace-nowrap">
             {category ? category : <span data-i18n="uncategorized">{t[I18nKey.uncategorized]}</span>}
