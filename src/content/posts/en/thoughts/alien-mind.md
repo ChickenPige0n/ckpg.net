@@ -12,10 +12,7 @@ lang: en
 translatedBy: deepseek-v4.1-flash
 ---
 
-Today's mainstream LLMs are Transformer-based Next Token Prediction machines: they inject world knowledge by pretraining on massive corpora, then use SFT to reshape their output into a conversational style, and finally, through post-training methods such as RLHF and RLVR, align with human preferences, control safety risks, improve tool-call correctness, enhance generalization, and build `long-horizon agentic coding ability`.
-
-
-On various occasions, at different times and in different places, I have voiced my dissatisfaction with the intelligence level of AI, LLMs, and agents. Intelligence is a broad word; Wikipedia defines it as follows:
+Intelligence is a broad word; Wikipedia defines it as follows:
 
 >Intelligence refers to the general mental capacity of living beings. This capacity includes the following: reasoning, understanding, planning, problem solving, abstraction, expressing ideas, as well as the abilities of language and learning. Although the definition and importance of intelligence remain debated, especially in mainstream publications, researchers are still able to hold consensus on quite a few intelligence-related questions.
 
@@ -74,8 +71,6 @@ One mechanism of human learning is the **hypothesis–experiment–verification 
 Current LLM training is offline and batch-based. Models are trained on static datasets and cannot interact with and verify against the real world in real time. Although RLHF introduces human feedback, this is still delayed and indirect. Models cannot quickly adjust their behavior through real-time trial and error the way humans do.
 
 Agent systems try to bridge this gap by having LLMs interact with tools and environments to form a closed loop. But this is still limited by the nature of token sequences — every interaction requires a complete reasoning cycle, and it cannot achieve the kind of fast, automatic, reflexive adjustment that humans have.
-
-[Theory is all you need](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4737265)
 
 
 # Parallel I/O and Thought
